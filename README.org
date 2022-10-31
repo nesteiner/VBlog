@@ -1,0 +1,33 @@
+#+title: Scaffold Building Log
+
+* Problem
+whatever url I try to access, it always return 200 and without response body
+
+#+DOWNLOADED: screenshot @ 2022-11-01 00:20:32
+[[file:images/Problem_1/2022-11-01_00-20-32_screenshot.png]]
+
+#+DOWNLOADED: screenshot @ 2022-11-01 00:20:53
+[[file:images/Problem_1/2022-11-01_00-20-53_screenshot.png]]
+
+I think it may be the problem about =WebSecurityConfigure=, you can find it in =configure/WebSecurityConfigure=
+and this is the code I think important inside
+#+begin_src kotlin
+  @Bean
+  @Throws(Exception::class)
+  fun filterChain(http: HttpSecurity): SecurityFilterChain {
+      http.csrf().disable()
+          .authorizeHttpRequests().requestMatchers(authenticateUrl, registerUrl).permitAll()
+          .and()
+          .authorizeHttpRequests().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+          .anyRequest().authenticated()
+          .and()
+          .exceptionHandling().authenticationEntryPoint(entryPoint)
+          .and()
+          .sessionManagement()
+          .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+      http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter::class.java)
+      http.addFilterAt(authenticateFilter, UsernamePasswordAuthenticationFilter::class.java)
+      return http.build()
+  }
+#+end_src
