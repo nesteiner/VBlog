@@ -21,7 +21,12 @@ const password = ref("")
 
 async function handleLogin() {
   try {
-    await login(username.value, password.value)
+    let request = {
+      username: username.value,
+      passwordHash: password.value
+    }
+    await login(request)
+
     router.replace({name: "home"})
   } catch(error: any) {
     alert(`fuck: ${error}`)

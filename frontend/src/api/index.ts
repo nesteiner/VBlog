@@ -6,10 +6,10 @@ const instance = Axios.create({
     baseURL: BASE_URL
 })
 const LOCAL_TOKEN_KEY = "token"
-async function login(username: string, password: string) {
-    let passwordHash = Md5.hashStr(password)
+async function login(request: LoginRequest) {
+    let passwordHash = Md5.hashStr(request.passwordHash)
     let jwttoken = await instance.post("/authenticate", {
-        username,
+        username: request.username,
         passwordHash
     }).then(response => response.data["jwttoken"])
         .catch(error => {

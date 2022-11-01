@@ -4,7 +4,6 @@ import com.example.backend.exception.RegisterException
 import com.example.backend.model.User
 import com.example.backend.repository.UserRepository
 import com.example.backend.request.RegisterRequest
-import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails

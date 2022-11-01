@@ -1,33 +1,121 @@
-#+title: Scaffold Building Log
+#+title: Scaffold 脚手架
 
-* Problem
-whatever url I try to access, it always return 200 and without response body
-
-#+DOWNLOADED: screenshot @ 2022-11-01 00:20:32
-[[file:images/Problem_1/2022-11-01_00-20-32_screenshot.png]]
-
-#+DOWNLOADED: screenshot @ 2022-11-01 00:20:53
-[[file:images/Problem_1/2022-11-01_00-20-53_screenshot.png]]
-
-I think it may be the problem about =WebSecurityConfigure=, you can find it in =configure/WebSecurityConfigure=
-and this is the code I think important inside
+* 配置项
+** 后端
+*** 用户模型 com.example.backend.model.User
 #+begin_src kotlin
-  @Bean
-  @Throws(Exception::class)
-  fun filterChain(http: HttpSecurity): SecurityFilterChain {
-      http.csrf().disable()
-          .authorizeHttpRequests().requestMatchers(authenticateUrl, registerUrl).permitAll()
-          .and()
-          .authorizeHttpRequests().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-          .anyRequest().authenticated()
-          .and()
-          .exceptionHandling().authenticationEntryPoint(entryPoint)
-          .and()
-          .sessionManagement()
-          .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-      http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter::class.java)
-      http.addFilterAt(authenticateFilter, UsernamePasswordAuthenticationFilter::class.java)
-      return http.build()
+  @Entity(name = "User")
+  class User(
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      var id: Long?,
+      @Column(length = 64, nullable = false, unique = true)
+      var name: String,
+      @Column(length = 255, nullable = false)
+      @JsonIgnore
+      var passwordHash: String){
   }
+#+end_src
+
+*** 注册请求 com.example.backend.request.RegisterRequest
+#+begin_src kotlin
+  class RegisterRequest(
+      @NotBlank(message = "username cannot be blank")
+      @Length(min = 5, message = "username length must greater than 5")
+      val username: String,
+      @NotBlank(message = "password cannot be blank")
+      val passwordHash: String
+  ) {
+  }
+#+end_src
+
+*** 登录请求 com.example.backend.request.LoginRequest
+#+begin_src kotlin
+  class LoginRequest(
+      @NotBlank(message = "username cannot be blank")
+      @Length(min = 5, message = "username length must greater than 5")
+      val username: String,
+
+      @NotBlank(message = "password cannot be blank")
+      val passwordHash: String
+  ) {
+
+  }
+#+end_src
+*** 数据库地址 resources/application.propertiees
+#+begin_src conf
+  server.port=8082
+  server.servlet.context-path=/api
+  spring.datasource.url=jdbc:mysql://localhost:3306/scaffold
+  spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+  spring.datasource.username=steiner
+  spring.datasource.password=mysql30449030
+  spring.jpa.hibernate.ddl-auto=create-drop
+  spring.jpa.properties.hibernate.format_sql=true
+  spring.jpa.show-sql=true
+  spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  jwt.secret=iot.technology
+  authenticate-url=/authenticate
+  register-url=/user/register
+#+end_src
+
+** 前端
+*** 用户模型 type.d.ts
+#+begin_src typescript
+  declare interface User {
+      id: number,
+      name: string
+  }
+#+end_src
+
+*** 注册请求 type.d.ts
+#+begin_src typescript
+  declare interface RegisterRequest {
+      username: string,
+      passwordHash: string
+  }
+#+end_src
+
+*** 登录请求 type.d.ts
+#+begin_src typescript
+  declare interface LoginRequest {
+    username: string,
+    passwordHash: string
+  }
+#+end_src
+
+*** 登录函数 api/index.ts
+#+begin_src typescript
+  async function login(request: LoginRequest) {
+      let passwordHash = Md5.hashStr(request.passwordHash)
+      let jwttoken = await instance.post("/authenticate", {
+          username: request.username,
+          passwordHash
+      }).then(response => response.data["jwttoken"])
+          .catch(error => {
+              throw error.response.data["message"]
+          })
+
+      let authorization = `Bearer ${jwttoken}`
+      localStorage.setItem(LOCAL_TOKEN_KEY, authorization)
+  }
+#+end_src
+
+*** 登出函数 api/index.ts
+#+begin_src typescript
+  function logout() {
+      localStorage.removeItem(LOCAL_TOKEN_KEY)
+  }
+#+end_src
+
+*** 注册函数 api/index.ts
+#+begin_src typescript
+  async function register(request: RegisterRequest) {
+      let password = request.passwordHash
+      request.passwordHash = Md5.hashStr(password)
+      let response = await instance.post("/register", request)
+      return response.data
+  }
+
 #+end_src
