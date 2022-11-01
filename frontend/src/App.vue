@@ -1,8 +1,7 @@
 <template>
   <nav>
     <div class="container">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/task">Tasks</router-link>
+      <router-link to="/">Home</router-link>
     </div>
     <button v-show="showable" @click="handleLogout">Logout</button>
   </nav>

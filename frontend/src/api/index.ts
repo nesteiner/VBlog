@@ -27,7 +27,7 @@ function logout() {
 async function register(request: RegisterRequest) {
     let password = request.passwordHash
     request.passwordHash = Md5.hashStr(password)
-    let response = await instance.post("/register", request)
+    let response = await instance.post("/user/register", request)
     return response.data
 }
 

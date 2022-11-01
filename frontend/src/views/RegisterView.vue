@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import {register} from "@/api";
+import {logout, register} from "@/api";
 
 const router = useRouter()
 const username = ref("")
