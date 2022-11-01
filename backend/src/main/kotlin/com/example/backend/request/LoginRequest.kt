@@ -9,7 +9,7 @@ class LoginRequest(
     val username: String,
 
     @NotBlank(message = "password cannot be blank")
-    val password: String
+    val passwordHash: String
 ) {
 
 }

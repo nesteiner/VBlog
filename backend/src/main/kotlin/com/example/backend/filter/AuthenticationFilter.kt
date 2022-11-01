@@ -38,5 +38,7 @@ class AuthenticationFilter: OncePerRequestFilter() {
                 SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
             }
         }
+
+        filterChain.doFilter(request, response)
     }
 }
