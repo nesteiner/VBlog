@@ -22,18 +22,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class WebSecurityConfigure {
     @Autowired
-    lateinit var entryPoint: JwtAuthenticationEntryPoint
-    @Autowired
-    lateinit var userService: UserService
-    @Autowired
-    lateinit var loginFilter: LoginFilter
-    @Autowired
-    lateinit var authenticateFilter: AuthenticationFilter
-    @Autowired
-    lateinit var mD5PasswordEncoder: MD5PasswordEncoder
-    @Autowired
     @Throws(Exception::class)
-    fun configureGlobal(authenticationManagerBuilder: AuthenticationManagerBuilder) {
+    fun configureGlobal(authenticationManagerBuilder: AuthenticationManagerBuilder, userService: UserService, mD5PasswordEncoder: MD5PasswordEncoder) {
         authenticationManagerBuilder
             .userDetailsService(userService)
             .passwordEncoder(mD5PasswordEncoder)
@@ -51,7 +41,7 @@ class WebSecurityConfigure {
 
     @Bean
     @Throws(Exception::class)
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    fun filterChain(http: HttpSecurity, entryPoint: JwtAuthenticationEntryPoint, loginFilter: LoginFilter, authenticateFilter: AuthenticationFilter): SecurityFilterChain {
         http.csrf().disable()
             .authorizeHttpRequests().requestMatchers(authenticateUrl, registerUrl).permitAll()
             .and()
