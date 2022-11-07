@@ -15,6 +15,8 @@ class User(
     var id: Long?,
     @Column(length = 64, nullable = false, unique = true)
     var name: String,
+    @Column(length = 16, nullable = false)
+    var roles: String,
     @Column(length = 255, nullable = false)
     @JsonIgnore
     var passwordHash: String){

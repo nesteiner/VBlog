@@ -43,7 +43,10 @@ class WebSecurityConfigure {
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity, entryPoint: JwtAuthenticationEntryPoint, loginFilter: LoginFilter, authenticateFilter: AuthenticationFilter): SecurityFilterChain {
         http.csrf().disable()
-            .authorizeHttpRequests().requestMatchers(authenticateUrl, registerUrl).permitAll()
+            .authorizeHttpRequests()
+            .requestMatchers(authenticateUrl, registerUrl).permitAll()
+            .requestMatchers("/admin/**").hasRole("admin")
+            .requestMatchers("/user/**").hasRole("user")
             .and()
             .authorizeHttpRequests().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .anyRequest().authenticated()

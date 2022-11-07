@@ -6,6 +6,7 @@ import com.example.backend.repository.UserRepository
 import com.example.backend.request.RegisterRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -20,7 +21,7 @@ class UserService: UserDetailsService {
     @Throws(RegisterException::class)
     fun insertOne(data: RegisterRequest): User {
         try {
-            val user = User(null, data.username, data.passwordHash)
+            val user = User(null, data.username, data.roles, data.passwordHash)
             return userRepository.save(user)
         } catch (exception: Exception) {
             throw RegisterException("username duplicate")
@@ -47,7 +48,11 @@ class UserService: UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
         val optionalUser = userRepository.findByName(username)
         return optionalUser?.let {user ->
-            OtherUser(user.name, user.passwordHash, listOf())
+            val simpleGrantedAuthorities = user.roles.split(",").map {
+                SimpleGrantedAuthority("ROLE_" + it)
+            }
+
+            OtherUser(user.name, user.passwordHash, simpleGrantedAuthorities)
         } ?: throw UsernameNotFoundException("no such user")
     }
 }
