@@ -1,6 +1,6 @@
 package com.example.backend.exception
 
-import java.lang.Exception
+import com.example.backend.utils.ErrorStatus
 
-class LoginException(override val message: String): Exception(message) {
+class LoginException(override val message: String, val status: ErrorStatus): Exception(message) {
 }

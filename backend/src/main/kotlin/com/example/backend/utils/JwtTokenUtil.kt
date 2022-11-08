@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.*
 import java.util.function.Function
-import javax.security.auth.login.LoginException
 import kotlin.collections.HashMap
 
 
@@ -76,12 +75,8 @@ class JwtTokenUtil {
         return username == userDetails.username && !isTokenExpired(token)
     }
 
-    @Throws(LoginException::class)
     fun getUsernameFromRequest(request: HttpServletRequest): String {
-        val requestToken = request.getHeader("Authorization")
-        if (requestToken == null || requestToken == "") {
-            throw LoginException("no token found")
-        }
+        val requestToken = request.getHeader("Authorization") as String
         val token = requestToken.replace("Bearer ", "")
         return getUsernameFromToken(token)
     }

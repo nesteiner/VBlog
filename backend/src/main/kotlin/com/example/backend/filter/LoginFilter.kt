@@ -1,5 +1,7 @@
 package com.example.backend.filter
 
+import com.example.backend.exception.LoginException
+import com.example.backend.utils.ErrorStatus
 import com.example.backend.utils.JwtTokenUtil
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.ExpiredJwtException
@@ -19,11 +21,11 @@ class LoginFilter : OncePerRequestFilter() {
     @Autowired
     lateinit var jwtTokenUtil: JwtTokenUtil
 
-    @Throws(ServletException::class, IOException::class)
+    @Throws(ServletException::class, IOException::class, LoginException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         response.contentType = "application/json; charset=utf-8"
         val requestTokenHeader = request.getHeader("Authorization")
-        val mapper = ObjectMapper()
+        val objectMapper = ObjectMapper()
         // enter request logic
         if(requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             val jwtToken = requestTokenHeader.split(" ")[1].trim()
@@ -33,43 +35,42 @@ class LoginFilter : OncePerRequestFilter() {
                 request.setAttribute("jwtToken", jwtToken)
             } catch (exception: IllegalArgumentException) {
                 logger.error("unable to get jwt token")
-                val node = mapper.createObjectNode()
+                val node = objectMapper.createObjectNode()
                 node.put("status", "access failed")
-                node.put("message", "in LoginFilter: unable to get jwt token")
-                val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node)
-                response.status = 401
-                response.writer.write(json)
+                node.put("message", "no token found")
+                node.put("data", ErrorStatus.NoTokenFound.code)
+                response.status = 400
+                response.writer.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node))
                 return
             } catch (exception: ExpiredJwtException) {
                 logger.error("jwt token has been expired")
-                val node = mapper.createObjectNode()
+                val node = objectMapper.createObjectNode()
                 node.put("status", "access failed")
-                node.put("message", "in LoginFilter: jwt token has been expired")
-                val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node)
-                response.status = 401
-                response.writer.write(json)
+                node.put("message", "token expired")
+                node.put("data", ErrorStatus.TokenExpired.code)
+                response.status = 400
+                response.writer.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node))
                 return
             } catch (exception: Exception) {
                 logger.error("unknown error")
-                val node = mapper.createObjectNode()
+                val node = objectMapper.createObjectNode()
                 node.put("status", "access failed")
-                node.put("message", "in LoginFilter: jwt token parse error")
-                val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node)
+                node.put("message", "unknow error")
+                node.put("data", ErrorStatus.Unknown.code)
                 response.status = 400
-                response.writer.write(json)
+                response.writer.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node))
                 return
             } finally {
                 // response.setHeader("Access-Control-ALlow-Origin", "*");
             }
         } else if (requestTokenHeader != null){
             logger.warn("jwt token does not begin with bearer string")
-            val node = mapper.createObjectNode()
+            val node = objectMapper.createObjectNode()
             node.put("status", "access failed")
-            node.put("message", "in LoginFilter: jwt token parse error")
-            val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node)
+            node.put("message", "jwt token does not begin with bearer string")
+            node.put("data", ErrorStatus.TokenParseError.code)
             response.status = 400
-
-            response.writer.write(json)
+            response.writer.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node))
             return
         }
 

@@ -17,11 +17,10 @@ import org.springframework.security.core.userdetails.User as OtherUser
 class UserService: UserDetailsService {
     @Autowired
     lateinit var userRepository: UserRepository
-
     @Throws(RegisterException::class)
     fun insertOne(data: RegisterRequest): User {
         try {
-            val user = User(null, data.username, data.roles, data.passwordHash)
+            val user = User(null, data.username, data.passwordHash, data.roles)
             return userRepository.save(user)
         } catch (exception: Exception) {
             throw RegisterException("username duplicate")
@@ -48,8 +47,8 @@ class UserService: UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
         val optionalUser = userRepository.findByName(username)
         return optionalUser?.let {user ->
-            val simpleGrantedAuthorities = user.roles.split(",").map {
-                SimpleGrantedAuthority("ROLE_" + it)
+            val simpleGrantedAuthorities = user.roles.map {
+                SimpleGrantedAuthority(it.name)
             }
 
             OtherUser(user.name, user.passwordHash, simpleGrantedAuthorities)

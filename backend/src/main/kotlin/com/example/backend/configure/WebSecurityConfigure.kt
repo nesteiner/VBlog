@@ -18,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
+
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfigure {
@@ -41,17 +42,15 @@ class WebSecurityConfigure {
 
     @Bean
     @Throws(Exception::class)
-    fun filterChain(http: HttpSecurity, entryPoint: JwtAuthenticationEntryPoint, loginFilter: LoginFilter, authenticateFilter: AuthenticationFilter): SecurityFilterChain {
+    fun filterChain(http: HttpSecurity, loginFilter: LoginFilter, authenticateFilter: AuthenticationFilter): SecurityFilterChain {
         http.csrf().disable()
             .authorizeHttpRequests()
             .requestMatchers(authenticateUrl, registerUrl).permitAll()
-            .requestMatchers("/admin/**").hasRole("admin")
-            .requestMatchers("/user/**").hasRole("user")
+            .requestMatchers("/admin/**").hasAuthority("admin")
+            .requestMatchers("/user/**").hasAnyAuthority("user", "admin")
             .and()
             .authorizeHttpRequests().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .anyRequest().authenticated()
-            .and()
-            .exceptionHandling().authenticationEntryPoint(entryPoint)
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

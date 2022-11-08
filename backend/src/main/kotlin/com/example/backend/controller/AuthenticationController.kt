@@ -3,6 +3,7 @@ package com.example.backend.controller
 import com.example.backend.exception.LoginException
 import com.example.backend.request.LoginRequest
 import com.example.backend.response.LoginResponse
+import com.example.backend.utils.ErrorStatus
 import com.example.backend.utils.JwtTokenUtil
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,13 +26,10 @@ import org.springframework.web.bind.annotation.RestController
 @Validated
 class AuthenticationController {
     @Autowired
-    lateinit var authenticationManager: AuthenticationManager;
+    lateinit var jwtTokenUtil: JwtTokenUtil
 
     @Autowired
-    lateinit var jwtTokenUtil: JwtTokenUtil;
-
-    @Autowired
-    lateinit var userDetailsService: UserDetailsService;
+    lateinit var userDetailsService: UserDetailsService
 
     @PostMapping("/authenticate")
     @Throws(LoginException::class)
@@ -47,15 +45,15 @@ class AuthenticationController {
         try {
             val user = userDetailsService.loadUserByUsername(username)
             if (password != user.password) {
-                throw LoginException("password error")
+                throw LoginException("password error", ErrorStatus.UserNamePasswordError)
             } else {
                 val authentication: Authentication = UsernamePasswordAuthenticationToken(user, null, user.authorities)
                 SecurityContextHolder.getContext().authentication = authentication
             }
         } catch (exception: DisabledException) {
-            throw LoginException("user diabled")
+            throw LoginException("user diabled", ErrorStatus.UserDisabled)
         } catch (exception: BadCredentialsException) { // this is for catching UsernameNotfoundException
-            throw LoginException("in AuthenticationController: no such user or password error")
+            throw LoginException("in AuthenticationController: no such user or password error", ErrorStatus.UserNamePasswordError)
         }
     }
 }
