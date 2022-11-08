@@ -1,7 +1,10 @@
 package com.example.backend.filter
 
 import com.example.backend.service.UserService
+import com.example.backend.utils.ErrorStatus
 import com.example.backend.utils.JwtTokenUtil
+import com.example.backend.utils.Response
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -30,15 +33,24 @@ class AuthenticationFilter: OncePerRequestFilter() {
         val jwttoken = request.getAttribute("jwtToken") as String?
 
         if(username != null && jwttoken != null && SecurityContextHolder.getContext().authentication == null) {
-            val userdetails = userService.loadUserByUsername(username)
-            if(jwtTokenUtil.validateToken(jwttoken, userdetails)) {
-                val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
-                    userdetails, null, userdetails.authorities
-                )
+            try {
+                val userdetails = userService.loadUserByUsername(username)
+                if(jwtTokenUtil.validateToken(jwttoken, userdetails)) {
+                    val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
+                        userdetails, null, userdetails.authorities
+                    )
 
-                usernamePasswordAuthenticationToken.setDetails(WebAuthenticationDetailsSource().buildDetails(request))
-                SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
+                    usernamePasswordAuthenticationToken.setDetails(WebAuthenticationDetailsSource().buildDetails(request))
+                    SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
+                }
+            } catch (exception: UsernameNotFoundException) {
+                val objectMapper = ObjectMapper()
+                val result = Response.Err("username not found", ErrorStatus.UserNameNotFound.code)
+                response.status = 400
+                response.writer.write(objectMapper.writeValueAsString(result))
+                return
             }
+
         }
 
         filterChain.doFilter(request, response)
