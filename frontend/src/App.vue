@@ -1,7 +1,7 @@
 <template>
   <nav>
     <div class="container">
-      <router-link to="/">Home</router-link>
+      <router-link :to="homelink">Home</router-link>
     </div>
     <button v-show="showable" @click="handleLogout">Logout</button>
   </nav>
@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import {useRoute, useRouter} from "vue-router";
-import {logout} from "@/api";
+import {findUser, isadmin, logout} from "@/api";
 import {computed} from "vue";
 
 const router = useRouter()
@@ -18,7 +18,14 @@ const route = useRoute()
 const showable = computed(() => {
   return route.name != "login" && route.name != "register"
 })
-
+const homelink = computed(async () => {
+  let user: User = await findUser()
+  if(isadmin(user)) {
+    return "/admin"
+  } else {
+    return "/"
+  }
+})
 function handleLogout() {
   if(showable.value) {
     logout()

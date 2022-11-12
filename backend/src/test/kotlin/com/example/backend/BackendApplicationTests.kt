@@ -31,9 +31,9 @@ class BackendApplicationTests {
         roleRepository.saveAll(roles)
 
         val users = listOf<User>(
-            User(null, "hello", "password", listOf(roles[0])),
-            User(null, "world", "password", listOf(roles[0])),
-            User(null, "admin", "password", roles)
+            User(null, "hello", "5f4dcc3b5aa765d61d8327deb882cf99", listOf(roles[0])),
+            User(null, "world", "5f4dcc3b5aa765d61d8327deb882cf99", listOf(roles[0])),
+            User(null, "admin", "5f4dcc3b5aa765d61d8327deb882cf99", roles)
         )
 
 

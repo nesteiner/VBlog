@@ -37,6 +37,11 @@ class RoleController {
         }
     }
 
+    @GetMapping
+    fun findAll(): Response<List<Role>> {
+        return Response.Ok("all roles", roleService.findAll())
+    }
+
     @PostMapping
     fun insertOne(@RequestBody @Valid request: RegisterRoleRequest, result: BindingResult): Response<Role> {
         return Response.Ok("insert ok", roleService.insertOne(request))

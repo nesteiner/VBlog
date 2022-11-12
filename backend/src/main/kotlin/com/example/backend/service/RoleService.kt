@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class RoleService {
+    companion object {
+        private const val DEFAULT_NAME = "user"
+    }
+
     @Autowired
     lateinit var roleRepository: RoleRepository
 
@@ -31,6 +35,16 @@ class RoleService {
 
     fun findOne(name: String): Role? {
         return roleRepository.findByName(name)
+    }
+
+    fun findDefault(): Role {
+        var role = findOne(DEFAULT_NAME)
+        if (role == null) {
+            role = Role(null, DEFAULT_NAME)
+            role = roleRepository.save(role)
+        }
+
+        return role
     }
     fun findAll(): List<Role> {
         return roleRepository.findAll()

@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import {logout, register} from "@/api";
+import {register} from "@/api";
 
 const router = useRouter()
 const username = ref("")
@@ -26,6 +26,7 @@ async function handleRegister() {
 
     await register(request)
     router.replace({name: "login"})
+
   } catch (error: any) {
     let errorMessage = error.response.data["message"]
     console.error(errorMessage)

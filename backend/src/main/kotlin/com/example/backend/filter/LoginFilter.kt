@@ -37,19 +37,19 @@ class LoginFilter : OncePerRequestFilter() {
             } catch (exception: IllegalArgumentException) {
                 logger.error("unable to get jwt token")
                 val result = Response.Err("no token found", ErrorStatus.NoTokenFound.code)
-                response.status = 400
+                response.status = 401
                 response.writer.write(objectMapper.writeValueAsString(result))
                 return
             } catch (exception: ExpiredJwtException) {
                 logger.error("jwt token has been expired")
                 val result = Response.Err("token expired", ErrorStatus.TokenExpired.code)
-                response.status = 400
+                response.status = 401
                 response.writer.write(objectMapper.writeValueAsString(result))
                 return
             } catch (exception: Exception) {
                 logger.error("unknown error")
                 val result = Response.Err("unknow error", ErrorStatus.Unknown.code)
-                response.status = 400
+                response.status = 401
                 response.writer.write(objectMapper.writeValueAsString(result))
                 return
             } finally {
@@ -58,7 +58,7 @@ class LoginFilter : OncePerRequestFilter() {
         } else if (requestTokenHeader != null){
             logger.warn("jwt token does not begin with bearer string")
             val result = Response.Err("jwt token does not begin with beare string", ErrorStatus.TokenParseError.code)
-            response.status = 400
+            response.status = 401
             response.writer.write(objectMapper.writeValueAsString(result))
             return
         }

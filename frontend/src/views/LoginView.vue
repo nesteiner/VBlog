@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import {ref} from "vue";
-import {login} from "@/api";
+import {findUser, isadmin, login} from "@/api";
 import {useRouter} from "vue-router";
 
 const router = useRouter()
@@ -26,8 +26,12 @@ async function handleLogin() {
       passwordHash: password.value
     }
     await login(request)
-
-    router.replace({name: "home"})
+    let user: User = await findUser()
+    if (isadmin(user)) {
+      router.replace({name: "admin-home"})
+    } else {
+      router.replace({name: "user-home"})
+    }
   } catch(error: any) {
     alert(`fuck: ${error}`)
   } finally {

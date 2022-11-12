@@ -65,20 +65,6 @@ class UserController {
         }
     }
 
-    @PutMapping("/roles")
-    @Throws(NoSuchUserException::class)
-    fun updateRoles(servletRequest: HttpServletRequest, @RequestBody @Valid request: UpdateRolesRequest, result: BindingResult): Response<User> {
-        val username = jwtTokenUtil.getUsernameFromRequest(servletRequest)
-        val user = userService.findOne(username)
-        if(user == null) {
-            throw NoSuchUserException("no such user ${username}")
-        } else {
-            user.roles = request.roles
-            val newuser = userService.updateOne(user)
-            return Response.Ok("update ok", newuser)
-        }
-    }
-
     @PutMapping("/name")
     @Throws(NoSuchUserException::class)
     fun updateName(servletRequest: HttpServletRequest, @RequestBody @Valid request: UpdateUserNameRequest, result: BindingResult): Response<User> {

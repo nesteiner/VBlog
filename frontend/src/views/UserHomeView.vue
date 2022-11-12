@@ -13,16 +13,11 @@ const router = useRouter()
 const user = ref<User>({
   id: 0,
   name: "loading",
+  roles: []
 })
 
 
 onMounted(async () => {
-  try {
-    user.value = await findUser()
-  } catch (error: any) {
-    if(error.response.status == 401 || error.response.status == 400) {
-      router.replace({name: "login"})
-    }
-  }
+  user.value = await findUser()
 })
 </script>

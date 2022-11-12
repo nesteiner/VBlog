@@ -17,10 +17,12 @@ import org.springframework.security.core.userdetails.User as OtherUser
 class UserService: UserDetailsService {
     @Autowired
     lateinit var userRepository: UserRepository
+    @Autowired
+    lateinit var roleService: RoleService
     @Throws(RegisterException::class)
     fun insertOne(data: RegisterRequest): User {
         try {
-            val user = User(null, data.username, data.passwordHash, data.roles)
+            val user = User(null, data.username, data.passwordHash, listOf(roleService.findDefault()))
             return userRepository.save(user)
         } catch (exception: Exception) {
             throw RegisterException("username duplicate")
@@ -41,6 +43,10 @@ class UserService: UserDetailsService {
 
     fun findOne(name: String): User? {
         return userRepository.findByName(name)
+    }
+
+    fun findAll(): List<User> {
+        return userRepository.findAll()
     }
 
     @Throws(UsernameNotFoundException::class)
