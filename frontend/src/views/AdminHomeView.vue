@@ -1,7 +1,15 @@
 <template>
   <div class="admin-home">
-    <template v-for="(user, index) in users" :key="index">
+    <nav>
+      <div class="container">
+        <router-link to="/admin">Home</router-link>
+      </div>
+      <button @click="handleLogout">Logout</button>
+    </nav>
+
+    <template v-for="(user, index) in adminStore.users" :key="index">
       <UserPanel :user="user"
+                 :roles="adminStore.roles"
                  @change-roles="handleChangeRoles($event, user.id, index)"
                  @change-name="handleChangeName($event, user.id, index)"
                  @ondelete="handleDelete(user.id, index)"/>
@@ -10,13 +18,19 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, provide, ref} from "vue";
-import {changeUserNameByAdmin, changeUserRoles, deleteUserByAdmin, findAllUser, findRoles} from "@/api";
+import {changeUserNameByAdmin, changeUserRoles, deleteUserByAdmin, logout} from "@/api";
 import UserPanel from "@/components/UserPanel.vue";
+import {useRouter} from "vue-router";
+import {useAdminStore} from "@/store/admin";
+import {onMounted} from "vue";
 
-const users = ref<User[]>([])
-const roles = ref<Role[]>([])
-provide("roles", roles)
+const router = useRouter();
+const adminStore = useAdminStore()
+
+function handleLogout() {
+  logout();
+  router.replace({name: "login"})
+}
 
 async function handleChangeRoles(roles: Role[], id: number, index: number) {
   let request: UpdateUserRoleRequest = {
@@ -24,7 +38,7 @@ async function handleChangeRoles(roles: Role[], id: number, index: number) {
     roles,
   }
 
-  users.value[index] = await changeUserRoles(request)
+  adminStore.users[index] = await changeUserRoles(request)
 }
 
 async function handleChangeName(name: string, id: number, index: number) {
@@ -33,7 +47,7 @@ async function handleChangeName(name: string, id: number, index: number) {
     name
   }
   try {
-    users.value[index] = await changeUserNameByAdmin(request)
+    adminStore.users[index] = await changeUserNameByAdmin(request)
   } catch(error: any) {
     if (error.response.status == 500) {
       alert(error.response.data["data"])
@@ -43,12 +57,13 @@ async function handleChangeName(name: string, id: number, index: number) {
 
 async function handleDelete(id: number, index: number) {
   await deleteUserByAdmin(id)
-  users.value.splice(index, 1)
-
+  adminStore.users.splice(index, 1)
 }
+
 onMounted(async () => {
-  users.value = await findAllUser()
-  roles.value = await findRoles()
+  await adminStore.loadUsers()
+  await adminStore.loadRoles()
+
 })
 </script>
 

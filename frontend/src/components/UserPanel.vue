@@ -26,7 +26,7 @@
       </div>
 
       <div class="roles">
-        <template v-for="(role, index) in allroles" :key="index">
+        <template v-for="(role, index) in roles" :key="index">
           <div class="role">
             <input type="checkbox"
                    :value="role"
@@ -47,15 +47,15 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, inject, ref, Ref} from "vue";
+import {computed, ref} from "vue";
 import Dialog from "@/components/Dialog.vue";
 
 const props = defineProps<{
   user: User,
+  roles: Role[]
 }>()
 
 const emits = defineEmits(["change-name", "change-roles", "ondelete"])
-const allroles = inject<Ref<Role>>("roles")
 const showdialog = ref(false)
 const checked = computed(() => {
   return (role: Role) => {

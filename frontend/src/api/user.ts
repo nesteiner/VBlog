@@ -1,7 +1,6 @@
 import {Md5} from "ts-md5"
-import {instance} from "@/api/index";
+import {instance, LOCAL_TOKEN_KEY} from "@/api/index";
 
-const LOCAL_TOKEN_KEY = "token"
 async function login(request: LoginRequest) {
     let passwordHash = Md5.hashStr(request.passwordHash)
     let jwttoken = await instance.post("/authenticate", {
@@ -12,7 +11,7 @@ async function login(request: LoginRequest) {
             throw error.response.data["message"]
         })
 
-    instance.defaults.headers.common["Authorization"] = `Bearer ${jwttoken}`
+    localStorage.setItem(LOCAL_TOKEN_KEY, `Bearer ${jwttoken}`)
 }
 
 function logout() {
@@ -35,6 +34,7 @@ async function deleteUser() {
     let response = await instance.delete("/user")
     return response.data["data"]
 }
+
 function isadmin(user: User) {
     return user.roles.findIndex(x => x.name == "admin") != -1
 }

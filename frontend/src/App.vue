@@ -1,38 +1,17 @@
 <template>
-  <nav>
-    <div class="container">
-      <router-link :to="homelink">Home</router-link>
-    </div>
-    <button v-show="showable" @click="handleLogout">Logout</button>
-  </nav>
+<!--  <nav>-->
+<!--    <div class="container">-->
+<!--      <router-link :to="homelink">Home</router-link>-->
+<!--    </div>-->
+<!--    <button v-show="showable" @click="handleLogout">Logout</button>-->
+<!--  </nav>-->
   <router-view/>
 </template>
 
 <script lang="ts" setup>
-import {useRoute, useRouter} from "vue-router";
-import {findUser, isadmin, logout} from "@/api";
-import {computed} from "vue";
 
-const router = useRouter()
-const route = useRoute()
-const showable = computed(() => {
-  return route.name != "login" && route.name != "register"
-})
-const homelink = computed(async () => {
-  let user: User = await findUser()
-  if(isadmin(user)) {
-    return "/admin"
-  } else {
-    return "/"
-  }
-})
-function handleLogout() {
-  if(showable.value) {
-    logout()
-    router.replace({name: "login"})
-  }
-}
 </script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

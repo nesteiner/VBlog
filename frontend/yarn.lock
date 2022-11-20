@@ -3252,6 +3252,14 @@ picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.3.1:
   resolved "https://registry.npmmirror.com/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
 
+pinia@^2.0.24:
+  version "2.0.24"
+  resolved "https://registry.npmmirror.com/pinia/-/pinia-2.0.24.tgz#babf12207931f85b31d7451b55c0d76785b91b51"
+  integrity sha512-DDLd4Iphyc+6PYYYbx7jkb6WP9gecgu9bz9huyB5rb7CdJI3DhzYiZI+/Ih8MLewRrP9DSpslF/BgSNrJtZU7A==
+  dependencies:
+    "@vue/devtools-api" "^6.4.5"
+    vue-demi "*"
+
 pkg-dir@^4.1.0:
   version "4.2.0"
   resolved "https://registry.npmmirror.com/pkg-dir/-/pkg-dir-4.2.0.tgz#f099133df7ede422e81d1d8448270eeb3e4261f3"
@@ -4376,6 +4384,11 @@ vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmmirror.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
+
+vue-demi@*:
+  version "0.13.11"
+  resolved "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.13.11.tgz#7d90369bdae8974d87b1973564ad390182410d99"
+  integrity sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
