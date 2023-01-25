@@ -62,7 +62,7 @@
   ): User
 
 #+end_src
-**** 注册请求
+**** 注册请求模型
 #+begin_src kotlin
   class RegisterStudentRequest(
       @NotBlank(message = "name cannot be blank")
@@ -105,7 +105,7 @@
       val sex: String,
   )
 #+end_src
-**** 更新请求
+**** 更新请求模型
 #+begin_src kotlin
   class UpdateStudentRequest(
       @NotNull(message = "id cannot be null")
@@ -252,6 +252,18 @@
 ***** doFilterInternal
 #+begin_src kotlin
   val services = listOf(studentService, adminService)
+#+end_src
+
+**** 查询设置 com.example.backend.controller.AdminController
+#+begin_src kotlin
+  @GetMapping("/user", params = ["type"])
+  fun findAll(@RequestParam("type") type: String, @RequestParam("size", defaultValue = "10") size: Int, @RequestParam("page", defaultValue = "0") page: Int): Response<Page<out User>> {
+      if (type == "student") {
+          return Response.Ok("all students", studentService.findAll(PageRequest.of(page, size)))
+      } else {
+          return Response.Err("unknown type", Page.empty())
+      }
+  }
 #+end_src
 *** 登录请求 com.example.backend.request.LoginRequest
 #+begin_src kotlin
