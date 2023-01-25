@@ -2,33 +2,257 @@
 
 * 配置项
 ** 后端
-*** 用户模型 com.example.backend.model.User
+*** 用户模型接口 com.example.backend.model.User
 #+begin_src kotlin
-  @Entity(name = "User")
-  class User(
+  interface User {
+      val id: Long?
+      val name: String
+      val passwordHash: String
+      val roles: List<Role>
+  }
+#+end_src
+*** 以 Student 为例的配置
+**** 模型定义
+#+begin_src kotlin
+  @Entity(name = "Student")
+  class Student(
       @Id
-      @GeneratedValue(strategy = GenerationType.IDENTITY)
-      var id: Long?,
-      @Column(length = 64, nullable = false, unique = true)
-      var name: String,
+      @GeneratedValue(strategy = GenerationType.AUTO, generator = "myid")
+      @GenericGenerator(name = "myid", strategy = "com.example.backend.generator.ManualInsertGenerator")
+      override var id: Long?,
+
+      @Column(length = 20, nullable = false)
+      override var name: String,
+
+      @Column(length = 4, nullable = false)
+      var grade: String,
+
+      @Column(length = 20, nullable = false)
+      var major: String,
+
+      @Column(length = 10, nullable = false)
+      var clazz: String,
+
+      @Column(length = 30, nullable = false)
+      var institute: String,
+
+      @Column(length = 11, nullable = false)
+      var telephone: String,
+
+      @Column(length = 30, nullable = false)
+      var email: String,
+
       @Column(length = 255, nullable = false)
       @JsonIgnore
-      var passwordHash: String){
-  }
-#+end_src
+      override var passwordHash: String,
 
-*** 注册请求 com.example.backend.request.RegisterRequest
+      @Column(length = 18, nullable = false, unique = true)
+      var cardId: String,
+
+      @Column(length = 2, nullable = false)
+      var sex: String,
+
+      @ManyToMany(fetch = FetchType.EAGER)
+      @JoinTable(
+          name = "StudentRole",
+          joinColumns = [JoinColumn(name = "userid", referencedColumnName = "id")],
+          inverseJoinColumns = [JoinColumn(name = "roleid", referencedColumnName = "id")]
+      )
+      override var roles: List<Role>
+  ): User
+
+#+end_src
+**** 注册请求
 #+begin_src kotlin
-  class RegisterRequest(
-      @NotBlank(message = "username cannot be blank")
-      @Length(min = 5, message = "username length must greater than 5")
-      val username: String,
+  class RegisterStudentRequest(
+      @NotBlank(message = "name cannot be blank")
+      @Length(min = 5, max = 20, message = "length of name must in 5-20")
+      val name: String,
+
+      @NotBlank(message = "grade cannot be blank")
+      @Length(max = 4, message = "length of grade must less than 4")
+      val grade: String,
+
+      @NotBlank(message = "major cannot be blank")
+      @Length(max = 20, message = "length of major must less than 20")
+      val major: String,
+
+      @NotBlank(message = "clazz cannot be blank")
+      @Length(max = 10)
+      val clazz: String,
+
+      @NotBlank(message = "institude cannot be blank")
+      @Length(max = 30, message = "length of institude must less than 30")
+      val institude: String,
+
+      @NotBlank(message = "telephone cannot blank")
+      @Length(min = 11, max = 11, message = "length of telephone must be 11")
+      val telephone: String,
+
+      @NotBlank(message = "email cannot be blank")
+      @Email(message = "email pattern error")
+      val email: String,
+
       @NotBlank(message = "password cannot be blank")
-      val passwordHash: String
-  ) {
+      val passwordHash: String,
+
+      @NotBlank(message = "cardId cannot be blank")
+      @Length(max = 18, message = "length of cardId must less than 18")
+      val cardId: String,
+
+      @NotBlank(message = "sex cannot be blank")
+      @Length(min = 2, max = 2, message = "sex must be 男 or 女")
+      val sex: String,
+  )
+#+end_src
+**** 更新请求
+#+begin_src kotlin
+  class UpdateStudentRequest(
+      @NotNull(message = "id cannot be null")
+      val id: Long,
+
+      @NotBlank(message = "name cannot be blank")
+      @Length(min = 5, max = 20, message = "length of name must in 5-20")
+      val name: String,
+
+      @NotBlank(message = "grade cannot be blank")
+      @Length(max = 4, message = "length of grade must less than 4")
+      val grade: String,
+
+      @NotBlank(message = "major cannot be blank")
+      @Length(max = 20, message = "length of major must less than 20")
+      val major: String,
+
+      @NotBlank(message = "clazz cannot be blank")
+      @Length(max = 10)
+      val clazz: String,
+
+      @NotBlank(message = "institude cannot be blank")
+      @Length(max = 30, message = "length of institude must less than 30")
+      val institude: String,
+
+      @NotBlank(message = "telephone cannot blank")
+      @Length(min = 11, max = 11, message = "length of telephone must be 11")
+      val telephone: String,
+
+      @NotBlank(message = "email cannot be blank")
+      @Email(message = "email pattern error")
+      val email: String,
+
+      @NotBlank(message = "password cannot be blank")
+      val passwordHash: String,
+
+      @NotBlank(message = "cardId cannot be blank")
+      @Length(max = 18, message = "length of cardId must less than 18")
+      val cardId: String,
+
+      @NotBlank(message = "sex cannot be blank")
+      @Length(min = 2, max = 2, message = "sex must be 男 or 女")
+      val sex: String,
+  )
+#+end_src
+**** 安全设置 com.example.backend.configure.WebSecurityConfigure
+#+begin_src kotlin
+  @Autowired
+  @Throws(Exception::class)
+  fun configureGlobal(authenticationManagerBuilder: AuthenticationManagerBuilder,
+                      studentService: StudentService,
+                      mD5PasswordEncoder: MD5PasswordEncoder) {
+      authenticationManagerBuilder
+          .userDetailsService(studentService)
+          .passwordEncoder(mD5PasswordEncoder)
   }
 #+end_src
 
+如何定义了多个用户模型，可以这样
+#+begin_src kotlin
+  @Autowired
+  @Throws(Exception::class)
+  fun configureGlobal(authenticationManagerBuilder: AuthenticationManagerBuilder,
+                      adminService: AdminService,
+                      studentService: StudentService,
+                      teacherService: TeacherService,
+                      mD5PasswordEncoder: MD5PasswordEncoder) {
+      authenticationManagerBuilder
+          .userDetailsService(adminService)
+          .passwordEncoder(mD5PasswordEncoder)
+
+      authenticationManagerBuilder
+          .userDetailsService(studentService)
+          .passwordEncoder(mD5PasswordEncoder)
+
+      authenticationManagerBuilder
+          .userDetailsService(teacherService)
+          .passwordEncoder(mD5PasswordEncoder)
+  }
+#+end_src
+**** 认证设置 com.example.backend.controller.AuthenticationController
+#+begin_src kotlin
+  @RestController
+  @Validated
+  class AuthenticationController {
+      @Autowired
+      lateinit var jwtTokenUtil: JwtTokenUtil
+
+      @Autowired
+      lateinit var userDetailsService: StudentService
+
+      @PostMapping("/authenticate", params = ["type"])
+      @Throws(LoginException::class)
+      fun createToken(@RequestBody @Valid request: LoginRequest, @RequestParam("type") type: String, result: BindingResult): ResponseEntity<LoginResponse> {
+          authenticate(request.username, request.passwordHash, type)
+          val userDetails = userDetailsService.loadUserByUsername(request.username)
+          val token = jwtTokenUtil.generateToken(userDetails)
+          return ResponseEntity.ok(LoginResponse(token))
+      }
+
+      @Throws(LoginException::class)
+      fun authenticate(username: String, password: String, type: String) {
+          try {
+              var user: UserDetails? = null
+              if (type == "student") {
+                  user = userDetailsService.loadUserByUsername(username)
+              } else {
+                  throw LoginException("no such user type", ErrorStatus.NoSuchUser)
+              }
+            
+              if (password != user.password) {
+                  throw LoginException("password error", ErrorStatus.UserNamePasswordError)
+              } else {
+                  val authentication: Authentication = UsernamePasswordAuthenticationToken(user, null, user.authorities)
+                  SecurityContextHolder.getContext().authentication = authentication
+              }
+          } catch (exception: DisabledException) {
+              throw LoginException("user diabled", ErrorStatus.UserDisabled)
+          } catch (exception: BadCredentialsException) { // this is for catching UsernameNotfoundException
+              throw LoginException("in AuthenticationController: no such user or password error", ErrorStatus.UserNamePasswordError)
+          }
+      }
+  }
+#+end_src
+
+需要修改的地方，在 =authenticate= 方法中
+#+begin_src kotlin
+  var user: UserDetails? = null
+  if (type == "student") {
+      user = userDetailsService.loadUserByUsername(username)
+  } else {
+      throw LoginException("no such user type", ErrorStatus.NoSuchUser)
+  }
+#+end_src
+**** 过滤器设置 com.example.backend.filter.AuthenticationFIlter
+***** @Autowired
+#+begin_src kotlin
+  @Autowired
+  lateinit var studentService: StudentService
+  @Autowired
+  lateinit var adminService: AdminService
+
+#+end_src
+***** doFilterInternal
+#+begin_src kotlin
+  val services = listOf(studentService, adminService)
+#+end_src
 *** 登录请求 com.example.backend.request.LoginRequest
 #+begin_src kotlin
   class LoginRequest(
@@ -38,9 +262,7 @@
 
       @NotBlank(message = "password cannot be blank")
       val passwordHash: String
-  ) {
-
-  }
+  )
 #+end_src
 *** 数据库地址 resources/application.propertiees
 #+begin_src conf
@@ -54,13 +276,17 @@
   spring.jpa.properties.hibernate.format_sql=true
   spring.jpa.show-sql=true
   spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-
-  jwt.secret=iot.technology
-  authenticate-url=/authenticate
-  register-url=/user/register
 #+end_src
 
+*** 开放 url 与 roles 设置 resources/application.properties
+#+begin_src conf
+  open.urls=/authenticate,/student/register
+  open.roles=student,admin
+#+end_src
 ** 前端
+*** Page 返回结果
+- content: 数组数据
+- totalPages: 所有分页的数量
 *** 用户模型 type.d.ts
 #+begin_src typescript
   declare interface User {

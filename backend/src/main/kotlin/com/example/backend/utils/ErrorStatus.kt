@@ -4,7 +4,7 @@ enum class ErrorStatus(val code: Int) {
     NoTokenFound(1),
     TokenExpired(2),
     TokenParseError(3),
-    DuplicateName(4),
+    BadRequest(4),
     ConstraintViolationError(5),
     RegisterError(6),
     NoSuchUser(7),

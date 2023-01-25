@@ -6,7 +6,7 @@ import com.example.backend.exception.RegisterException
 import com.example.backend.utils.ErrorStatus
 import com.example.backend.utils.Response
 import jakarta.validation.ConstraintViolationException
-import org.slf4j.LoggerFactory
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -59,11 +59,11 @@ class GlobalExceptionHandler {
         return Response.Err(message, ErrorStatus.UserNameNotFound.code)
     }
 
-    @ExceptionHandler(SQLIntegrityConstraintViolationException::class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    fun handleException(exception: SQLIntegrityConstraintViolationException): Response<Int> {
-        val message = exception.message ?: "Internal exception occurs"
-        return Response.Err(message, ErrorStatus.InternalServerError.code)
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleException(exception: DataIntegrityViolationException): Response<Int> {
+        val message = exception.message ?: "data integrity violation exception"
+        return Response.Err(message, ErrorStatus.BadRequest.code)
     }
 
     @ExceptionHandler(Exception::class)

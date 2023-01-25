@@ -10,6 +10,4 @@ class LoginRequest(
 
     @NotBlank(message = "password cannot be blank")
     val passwordHash: String
-) {
-
-}
+)
