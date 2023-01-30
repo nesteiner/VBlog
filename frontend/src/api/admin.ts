@@ -1,8 +1,12 @@
 import {instance} from "@/api/index";
+import {Md5} from "ts-md5";
 
-async function findAllUser() {
-    let response = await instance.get("/admin/user")
-    return response.data["data"]
+async function findAllUser(type: string, page = 0, size = 10) {
+    let response = await instance.get(`/admin/user?type=${type}&page=${page}&size=${size}`)
+    return {
+        content: response.data["data"]["content"],
+        totalPages: response.data["data"]["totalPages"]
+    }
 }
 
 async function findRoles() {
@@ -10,13 +14,18 @@ async function findRoles() {
     return response.data["data"]
 }
 
-async function changeUserRoles(request: UpdateUserRoleRequest) {
-    let response = await instance.put("/admin/user/role", request)
+async function insertRole(request: RegisterRoleRequest) {
+    let response = await instance.post("/admin/role", request)
     return response.data["data"]
 }
 
-async function changeUserNameByAdmin(request: UpdateUserNameRequest) {
-    let response = await instance.put("/admin/user/name", request)
+async function deleteRole(id: number) {
+    let response = await instance.delete(`/admin/role/${id}`)
+    return response.data["data"]
+}
+
+async function updateRole(requset: UpdateRoleRequest) {
+    let response = await instance.put("/admin/role", requset)
     return response.data["data"]
 }
 
@@ -25,10 +34,28 @@ async function deleteUserByAdmin(id: number) {
     return response.data["data"]
 }
 
+async function updateStudent(request: UpdateStudentRequest) {
+    request.passwordHash = Md5.hashStr(request.passwordHash)
+    let response = await instance.put("/student", request)
+    return response.data["data"]
+}
+
+async function registerStudent(request: RegisterStudentRequest) {
+    let passwordHash = Md5.hashStr(request.passwordHash)
+    let response = await instance.post("/student/register", {
+        ...request,
+        passwordHash
+    })
+
+    return response.data["data"]
+}
 export {
     findAllUser,
     findRoles,
-    changeUserRoles,
-    changeUserNameByAdmin,
-    deleteUserByAdmin
+    insertRole,
+    deleteRole,
+    updateRole,
+    deleteUserByAdmin,
+    updateStudent,
+    registerStudent
 }

@@ -23,7 +23,7 @@ class RegisterStudentRequest(
 
     @NotBlank(message = "institude cannot be blank")
     @Length(max = 30, message = "length of institude must less than 30")
-    val institude: String,
+    val institute: String,
 
     @NotBlank(message = "telephone cannot blank")
     @Length(min = 11, max = 11, message = "length of telephone must be 11")

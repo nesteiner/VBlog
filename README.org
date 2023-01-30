@@ -299,65 +299,9 @@
 *** Page 返回结果
 - content: 数组数据
 - totalPages: 所有分页的数量
-*** 用户模型 type.d.ts
-#+begin_src typescript
-  declare interface User {
-      id: number,
-      name: string
-  }
-#+end_src
-
-*** 注册请求 type.d.ts
-#+begin_src typescript
-  declare interface RegisterRequest {
-      username: string,
-      passwordHash: string
-  }
-#+end_src
-
-*** 登录请求 type.d.ts
-#+begin_src typescript
-  declare interface LoginRequest {
-    username: string,
-    passwordHash: string
-  }
-#+end_src
-
-*** 登录函数 api/index.ts
-#+begin_src typescript
-  async function login(request: LoginRequest) {
-      let passwordHash = Md5.hashStr(request.passwordHash)
-      let jwttoken = await instance.post("/authenticate", {
-          username: request.username,
-          passwordHash
-      }).then(response => response.data["jwttoken"])
-          .catch(error => {
-              throw error.response.data["message"]
-          })
-
-      let authorization = `Bearer ${jwttoken}`
-      localStorage.setItem(LOCAL_TOKEN_KEY, authorization)
-  }
-#+end_src
-
-*** 登出函数 api/index.ts
-#+begin_src typescript
-  function logout() {
-      localStorage.removeItem(LOCAL_TOKEN_KEY)
-  }
-#+end_src
-
-*** 注册函数 api/index.ts
-#+begin_src typescript
-  async function register(request: RegisterRequest) {
-      let password = request.passwordHash
-      request.passwordHash = Md5.hashStr(password)
-      let response = await instance.post("/register", request)
-      return response.data
-  }
-
-#+end_src
-
+*** 用户注册流程
+1. ？是否直接开放注册
+2. 用户添加操作由 Admin 操作 ？
 * Nginx 配置
 #+begin_src conf
   user steiner;

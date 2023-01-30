@@ -26,7 +26,7 @@ class StudentService : UserDetailsService, UserService<Student, RegisterStudentR
     override fun insertOne(data: RegisterStudentRequest): Student {
         val role = roleRepository.findByName("student")!!
         val student = Student(
-            null, data.name, data.grade, data.major, data.clazz, data.institude, data.telephone,
+            null, data.name, data.grade, data.major, data.clazz, data.institute, data.telephone,
             data.email, data.passwordHash, data.cardId, data.sex, listOf(role)
         )
         return studentRepository.save(student)
@@ -44,7 +44,7 @@ class StudentService : UserDetailsService, UserService<Student, RegisterStudentR
             data.grade,
             data.major,
             data.clazz,
-            data.institude,
+            data.institute,
             data.telephone,
             data.email,
             data.passwordHash,

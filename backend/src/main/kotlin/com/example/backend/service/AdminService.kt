@@ -51,7 +51,12 @@ class AdminService: UserDetailsService, UserService<Admin, RegisterAdminRequest,
     }
 
     override fun deleteOne(id: Long) {
-        adminRepository.deleteById(id)
+        val ifadmin = adminRepository.findByIdOrNull(id)
+        ifadmin?.let {
+            if (!(it.name == "admin")) {
+                adminRepository.deleteById(id)
+            }
+        }
     }
 
     override fun updateOne(data: UpdateAdminRequest): Admin {

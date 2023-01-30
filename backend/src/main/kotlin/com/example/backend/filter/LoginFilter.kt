@@ -55,9 +55,9 @@ class LoginFilter : OncePerRequestFilter() {
             } finally {
                 // response.setHeader("Access-Control-ALlow-Origin", "*");
             }
-        } else if (requestTokenHeader != null){
+        } else if (requestTokenHeader != null && !requestTokenHeader.startsWith("Bearer ")) {
             logger.warn("jwt token does not begin with bearer string")
-            val result = Response.Err("jwt token does not begin with beare string", ErrorStatus.TokenParseError.code)
+            val result = Response.Err("jwt token does not begin with bearer string", ErrorStatus.TokenParseError.code)
             response.status = 401
             response.writer.write(objectMapper.writeValueAsString(result))
             return

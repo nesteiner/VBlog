@@ -35,7 +35,9 @@ class AdminController {
     lateinit var roleService: RoleService
 
     @GetMapping("/user", params = ["type"])
-    fun findAll(@RequestParam("type") type: String, @RequestParam("size", defaultValue = "10") size: Int, @RequestParam("page", defaultValue = "0") page: Int): Response<Page<out User>> {
+    fun findAll(@RequestParam("type") type: String,
+                @RequestParam("size", defaultValue = "10") size: Int,
+                @RequestParam("page", defaultValue = "0") page: Int): Response<Page<out User>> {
         if (type == "student") {
             return Response.Ok("all students", studentService.findAll(PageRequest.of(page, size)))
         } else {

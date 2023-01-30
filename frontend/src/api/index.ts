@@ -9,7 +9,10 @@ const instance = Axios.create({
 instance.interceptors.request.use(
     config => {
         if (config.headers !== undefined) {
-            config.headers["Authorization"] = localStorage.getItem(LOCAL_TOKEN_KEY) || "no token"
+            let item = localStorage.getItem(LOCAL_TOKEN_KEY)
+            if (item != null) {
+                config.headers["Authorization"] = item
+            }
         }
         return config
     },

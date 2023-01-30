@@ -13,6 +13,6 @@ class Role(
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "myid")
     @GenericGenerator(name = "myid", strategy = "com.example.backend.generator.ManualInsertGenerator")
     val id: Long?,
-    @Column(length = 32, nullable = false)
+    @Column(length = 32, nullable = false, unique = true)
     val name: String
 )

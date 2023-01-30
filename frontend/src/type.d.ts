@@ -3,12 +3,12 @@ declare interface Role {
     name: string
 }
 
-declare interface RegisterRequest {
-    username: string,
-    passwordHash: string,
+declare interface RegisterRoleRequest {
+    name: string
 }
 
-declare interface RegisterRoleRequest {
+declare interface UpdateRoleRequest {
+    id: number,
     name: string
 }
 
@@ -23,12 +23,53 @@ declare interface User {
     roles: Role[]
 }
 
-declare interface UpdateUserNameRequest {
-    id?: number,
-    name: string
+declare interface Student {
+    id: number,
+    name: string,
+    grade: string,
+    major: string,
+    clazz: string,
+    institute: string,
+    telephone: string,
+    email: string,
+    sex: string,
+    roles: Role[],
+    cardId: string
 }
 
-declare interface UpdateUserRoleRequest {
+declare interface Admin {
     id: number,
+    name: string,
     roles: Role[]
+}
+
+declare interface RegisterStudentRequest {
+    name: string,
+    grade: string,
+    major: string,
+    clazz: string,
+    institute: string,
+    telephone: string,
+    passwordHash: string,
+    email: string,
+    sex: string,
+    cardId: string
+}
+
+declare interface UpdateStudentRequest {
+    name: string,
+    grade: string,
+    major: string,
+    clazz: string,
+    institute: string,
+    telephone: string,
+    passwordHash: string,
+    email: string,
+    sex: string,
+    cardId: string
+}
+
+declare interface DataResponse<T> {
+    content: T[],
+    totalPages: number
 }
