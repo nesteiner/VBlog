@@ -36,3 +36,6 @@ export {instance, LOCAL_TOKEN_KEY}
 
 export * from "./user"
 export * from "./admin"
+export * from "./article"
+export * from "./category"
+export * from "./tag"

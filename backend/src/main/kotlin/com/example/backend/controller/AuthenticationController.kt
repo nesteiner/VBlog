@@ -3,8 +3,7 @@ package com.example.backend.controller
 import com.example.backend.exception.LoginException
 import com.example.backend.request.LoginRequest
 import com.example.backend.response.LoginResponse
-import com.example.backend.service.AdminService
-import com.example.backend.service.StudentService
+import com.example.backend.service.UserService
 import com.example.backend.utils.ErrorStatus
 import com.example.backend.utils.JwtTokenUtil
 import jakarta.validation.Valid
@@ -31,24 +30,12 @@ class AuthenticationController {
     @Autowired
     lateinit var jwtTokenUtil: JwtTokenUtil
     @Autowired
-    lateinit var studentService: StudentService
-    @Autowired
-    lateinit var adminService: AdminService
+    lateinit var userService: UserService
 
-    @PostMapping("/authenticate", params = ["type"])
+    @PostMapping("/authenticate")
     @Throws(LoginException::class)
-    fun createToken(@RequestBody @Valid request: LoginRequest, @RequestParam("type") type: String, result: BindingResult): ResponseEntity<LoginResponse> {
-        var userDetailsService: UserDetailsService? = null
-
-        if (type == "admin") {
-            userDetailsService = adminService
-        } else if(type == "student") {
-            userDetailsService = studentService
-        } else {
-            throw LoginException("no such user type", ErrorStatus.NoSuchUser)
-        }
-
-        val userDetails = userDetailsService.loadUserByUsername(request.username)
+    fun createToken(@RequestBody @Valid request: LoginRequest, result: BindingResult): ResponseEntity<LoginResponse> {
+        val userDetails = userService.loadUserByUsername(request.username)
         authenticate(request.username, request.passwordHash, userDetails)
 
         val token = jwtTokenUtil.generateToken(userDetails)

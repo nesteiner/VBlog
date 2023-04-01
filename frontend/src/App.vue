@@ -1,10 +1,4 @@
 <template>
-<!--  <nav>-->
-<!--    <div class="container">-->
-<!--      <router-link :to="homelink">Home</router-link>-->
-<!--    </div>-->
-<!--    <button v-show="showable" @click="handleLogout">Logout</button>-->
-<!--  </nav>-->
   <router-view/>
 </template>
 

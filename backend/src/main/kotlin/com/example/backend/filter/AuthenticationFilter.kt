@@ -1,7 +1,6 @@
 package com.example.backend.filter
 
-import com.example.backend.service.AdminService
-import com.example.backend.service.StudentService
+import com.example.backend.service.UserService
 import com.example.backend.utils.ErrorStatus
 import com.example.backend.utils.JwtTokenUtil
 import com.example.backend.utils.Response
@@ -23,9 +22,7 @@ class AuthenticationFilter: OncePerRequestFilter() {
     @Autowired
     lateinit var jwtTokenUtil: JwtTokenUtil
     @Autowired
-    lateinit var studentService: StudentService
-    @Autowired
-    lateinit var adminService: AdminService
+    lateinit var userService: UserService
 
     @Throws(UsernameNotFoundException::class)
     override fun doFilterInternal(
@@ -35,7 +32,7 @@ class AuthenticationFilter: OncePerRequestFilter() {
     ) {
         val username = request.getAttribute("username") as String?
         val jwttoken = request.getAttribute("jwtToken") as String?
-        val services = listOf(studentService, adminService)
+        val services = listOf(userService)
 
         if(username != null && jwttoken != null && SecurityContextHolder.getContext().authentication == null) {
             try {

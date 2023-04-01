@@ -70,6 +70,7 @@ class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleException(exception: Exception): Response<Int> {
         val message = exception.message ?: "Internal exception occurs"
+        exception.printStackTrace()
         return Response.Err(message, ErrorStatus.InternalServerError.code)
     }
 }

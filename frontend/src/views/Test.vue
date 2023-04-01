@@ -1,21 +1,9 @@
 <template>
-  <div class="test-view">
-    <!--    1. sidebar-->
-    <!--    2. tabbar-->
-    <Sidebar>
-      <SidebarItem>
-        Hello
-      </SidebarItem>
-      <SidebarItem>
-        World
-      </SidebarItem>
-    </Sidebar>
-
-  </div>
+  <BlogTable :state="1" active-name="hello" show-delete show-edit show-restore/>
 </template>
 
 <script lang="ts" setup>
-import {Sidebar, SidebarItem} from "@/components/sidebar"
+import BlogTable from "@/components/BlogTable.vue"
 </script>
 
 <style lang="scss" scoped>

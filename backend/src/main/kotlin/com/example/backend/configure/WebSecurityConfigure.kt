@@ -3,7 +3,7 @@ package com.example.backend.configure
 import com.example.backend.encoder.MD5PasswordEncoder
 import com.example.backend.filter.AuthenticationFilter
 import com.example.backend.filter.LoginFilter
-import com.example.backend.service.StudentService
+import com.example.backend.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -25,10 +25,10 @@ class WebSecurityConfigure {
     @Autowired
     @Throws(Exception::class)
     fun configureGlobal(authenticationManagerBuilder: AuthenticationManagerBuilder,
-                        studentService: StudentService,
+                        userService: UserService,
                         mD5PasswordEncoder: MD5PasswordEncoder) {
         authenticationManagerBuilder
-            .userDetailsService(studentService)
+            .userDetailsService(userService)
             .passwordEncoder(mD5PasswordEncoder)
     }
 
@@ -52,6 +52,8 @@ class WebSecurityConfigure {
             .requestMatchers(*openUrls).permitAll()
             .requestMatchers("/admin/**").hasAuthority("admin")
             .requestMatchers("/user/**").hasAnyAuthority(*openRoles)
+            .requestMatchers("/tag/**").hasAnyAuthority(*openRoles)
+            .requestMatchers("/category/**").hasAnyAuthority(*openRoles)
             .and()
             .authorizeHttpRequests().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .anyRequest().authenticated()

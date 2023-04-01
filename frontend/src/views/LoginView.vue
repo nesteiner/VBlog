@@ -15,13 +15,6 @@
     </div>
 
     <div class="form-item">
-      <div class="row">
-        <input type="radio" value="student" v-model="usertype">student <br/>
-        <input type="radio" value="admin" v-model="usertype">admin <br/>
-      </div>
-    </div>
-
-    <div class="form-item">
       <button @click="handleLogin">Login</button>
     </div>
   </div>
@@ -35,7 +28,6 @@ import {useRouter} from "vue-router";
 const router = useRouter()
 const username = ref("")
 const password = ref("")
-const usertype = ref("student")
 
 async function handleLogin() {
   try {
@@ -43,12 +35,8 @@ async function handleLogin() {
       username: username.value,
       passwordHash: password.value
     }
-    await login(request, usertype.value)
-    if (usertype.value == "student") {
-      router.replace({name: "student-home"})
-    } else if(usertype.value == "admin") {
-      router.replace({name: "admin-home"})
-    }
+    await login(request)
+    router.push({name: "home"})
   } catch(error: any) {
     alert(`fuck: ${error}`)
   } finally {

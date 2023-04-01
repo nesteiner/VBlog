@@ -1,5 +1,58 @@
 #+title: Scaffold 脚手架
 
+* 开发 Progress
+
+** 添加 Article
+后端 insertOne
+- insert
+- tags 处理
+前端 insertOne
+- stripHtml
+- publishDate
+- editTime
+- author
+
+** ImageItem
+- 如何获取资源？
+- open.url 设置
+
+
+* DONE 测试任务
+1. 虚拟数据插入
+   1. 先插入 tag
+   2. 再插入 category
+   3. 最后插入 article
+2. backend url 文档
+3. postman 测试
+4. image 上传与下载
+
+* 前端页面设计 DEBUG
+1. PostArticle.vue article.state 设置
+** Backend
+register error: admin is user !
+** HomeView
+1. 首页设置
+2. user
+   - system-message
+   - my-article
+   - my-home
+   - category-manage 分类管理
+   - logout
+3. admin
+   - system-message
+   - user manage
+   - logout
+4. 添加文章
+   1. [X] dynamic tags 添加
+   2. [X] PROBLEM htmlContent 添加
+   3. [X] 添加 summary
+5. 修改文章
+   - [X] 修改时添加了一个文章
+6. 回收站功能
+7. 细枝末节修改
+   url 命名方式
+   url 参数命名方式
+
 * 配置项
 ** 后端
 *** 用户模型接口 com.example.backend.model.User
