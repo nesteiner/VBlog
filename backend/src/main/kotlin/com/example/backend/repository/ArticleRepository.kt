@@ -1,6 +1,7 @@
 package com.example.backend.repository
 
 import com.example.backend.model.Article
+import com.example.backend.model.Category
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -34,4 +35,6 @@ interface ArticleRepository: JpaRepository<Article, Long> {
     @Transactional
     @Modifying
     fun pageViewIncrement(id: Long)
+
+    fun findAllByCategory(category: Category): List<Article>
 }

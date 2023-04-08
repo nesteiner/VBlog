@@ -14,33 +14,39 @@ const routes: Array<RouteRecordRaw> = [
 
     children: [
       {
-        path: "/",
+        path: "",
         name: "default",
-        component: () => import("@/components/ArticleList.vue")
-      },
-      
-      {
-        path: "/articleList",
-        name: "articleList",
         component: () => import("@/components/ArticleList.vue")
       },
 
       {
-        path: "/postArticle",
-        name: "postArticle",
+        path: "article-list",
+        name: "article-list",
+        component: () => import("@/components/ArticleList.vue")
+      },
+
+      {
+        path: "post-article",
+        name: "post-article",
         component: () => import("@/components/PostArticle.vue")
       },
 
       {
-        path: "/blogDetail",
-        name: "blogDetail",
+        path: "blog-detail",
+        name: "blog-detail",
         component: () => import("@/components/BlogDetail.vue")
       },
 
       {
-        path: "/editBlog",
-        name: "editBlog",
+        path: "edit-blog",
+        name: "edit-blog",
         component: () => import("@/components/PostArticle.vue")
+      },
+
+      {
+        path: "category-manage",
+        name: "category-manage",
+        component: () => import("@/components/CategoryManage.vue")
       }
     ]
   },

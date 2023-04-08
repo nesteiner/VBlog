@@ -36,7 +36,7 @@ class ArticleService {
         } else {
             val article = Article(
                 null, data.title, data.markdownContent, data.htmlContent, data.summary,
-                data.category, ifuser, timestamp, timestamp, Article.PUBLISHED, 0, data.tags
+                data.category, ifuser, timestamp, timestamp, data.state, 0, data.tags
             )
             return articleRepository.save(article)
         }

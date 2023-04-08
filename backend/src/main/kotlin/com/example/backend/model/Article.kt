@@ -58,6 +58,7 @@ class Article(
     companion object {
         const val SCRATCH = 0
         const val PUBLISHED = 1
-        const val DELETED = 2
+        const val DUSTBIN = 2
+        const val DELETED = 3
     }
 }
