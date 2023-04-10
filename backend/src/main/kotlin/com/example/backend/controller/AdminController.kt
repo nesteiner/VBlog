@@ -59,8 +59,12 @@ class AdminController {
     }
 
     @GetMapping("/user", params = ["nickname"])
-    fun findAllUserByNickname(@RequestParam("nickname") nickname: String): Response<List<User>> {
-        return Response.Ok("these users", userService.findAllByNichname(nickname))
+    fun findAllUsersByNickname(@RequestParam("nickname") nickname: String): Response<List<User>> {
+        if (nickname == "") {
+            return Response.Ok("all users", userService.findAll())
+        } else {
+            return Response.Ok("these users", userService.findAllByNichname(nickname))
+        }
     }
 
     @GetMapping("/user/{id}")
@@ -80,15 +84,15 @@ class AdminController {
     }
 
     @PutMapping("/user/enabled")
-    fun updateUserEnabled(@RequestBody request: UpdateEnabledRequest): Response<Status> {
-        userService.updateEnabled(request.userid, request.enabled)
-        return Response.Ok("update ok", Status.Ok)
+    fun updateUserEnabled(@RequestBody request: UpdateEnabledRequest): Response<Boolean> {
+        val result = userService.updateEnabled(request.userid, request.enabled)
+        return Response.Ok("update ok", result)
     }
 
     @PutMapping("/user/role")
-    fun updateUserRoles(@RequestBody request: UpdateRolesRequest): Response<Status> {
-        userService.updateRoles(request.userid, request.roleids)
-        return Response.Ok("update ok", Status.Ok)
+    fun updateUserRoles(@RequestBody request: UpdateRolesRequest): Response<List<Role>> {
+        val result = userService.updateRoles(request.userid, request.roleids)
+        return Response.Ok("update ok", result)
     }
 
 

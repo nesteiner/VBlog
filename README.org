@@ -11,8 +11,13 @@
 - [X] 栏目管理
 - [X] 请求时 state = ?
 - [X] 添加 Category
+- [X] 用户管理
+- [ ] 用户管理 + 用户 enabled
 ** Backend
 - [X] Article state 添加一个字段 state = DELETED/3, state = DUSTBIN/2
+
+** PROBLEM
+- [X] enabledChange(user.enabled) ?
 * 介绍
 这个项目参考了 江南一点雨 大佬的 *VBlog* 项目，原先后端都抄了一遍，抄明白后，自己用 Kotlin 写了自己的后端
 我并没有使用 mybatis 来作为 ORM ，而是使用 JPA 作为与数据库的交互，主要是因为 mybatis 抄的时候发现自己用的是 Kotlin ，里面的构造方法要求

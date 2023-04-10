@@ -1,6 +1,6 @@
 import {instance} from "@/api/index";
 
-async function findAllUserByNickname(nickname: string) {
+async function findAllUsersByNickname(nickname: string) {
 	let response = await instance.get(`/admin/user?nickname=${nickname}`)
 	return response.data["data"]
 }
@@ -20,8 +20,8 @@ async function deleteRole(id: number) {
 	return response.data["data"]
 }
 
-async function updateRole(requset: UpdateRoleRequest) {
-	let response = await instance.put("/admin/role", requset)
+async function updateRoles(request: UpdateRolesRequest) {
+	let response = await instance.put("/admin/user/role", request)
 	return response.data["data"]
 }
 
@@ -46,11 +46,11 @@ async function updateUserRoles(request: UpdateRolesRequest) {
 }
 
 export {
-	findAllUserByNickname,
+	findAllUsersByNickname,
 	findRoles,
 	insertRole,
 	deleteRole,
-	updateRole,
+	updateRoles,
 	deleteUserByAdmin,
 	findUser,
 	updateUserEnabled,

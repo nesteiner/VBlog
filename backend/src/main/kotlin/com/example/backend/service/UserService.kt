@@ -1,5 +1,6 @@
 package com.example.backend.service
 
+import com.example.backend.exception.NoSuchUserException
 import com.example.backend.model.Role
 import com.example.backend.model.User
 import com.example.backend.model.UserRole
@@ -79,25 +80,36 @@ class UserService: UserDetailsService {
         return userRepository.findAllByNickname(nickname)
     }
 
-    fun updateEnabled(id: Long, enabled: Boolean): User? {
+    fun findAll(): List<User> {
+        return userRepository.findAll()
+    }
+
+    fun updateEnabled(id: Long, enabled: Boolean): Boolean {
         val ifuser = userRepository.findByIdOrNull(id)
         if (ifuser != null) {
             ifuser.enabled = enabled
             userRepository.save(ifuser)
+            return enabled
+        } else {
+            throw NoSuchUserException("no such user: ${id}")
         }
-
-        return ifuser
     }
 
     fun deleteOne(id: Long) {
         userRepository.deleteById(id)
     }
 
-    fun updateRoles(id: Long, rids: Array<Long>): User? {
+    fun updateRoles(id: Long, rids: Array<Long>): List<Role> {
         userRoleRepository.deleteAllByUserid(id)
 
         val ifuser = userRepository.findByIdOrNull(id)
         if (ifuser != null) {
+            val userroles = ifuser.roles.map {
+                UserRole(id, it.id!!)
+            }
+
+            userRoleRepository.deleteAll(userroles)
+
             ifuser.roles = rids.map {
                 roleRepository.findByIdOrNull(it)!!
             }
@@ -107,9 +119,12 @@ class UserService: UserDetailsService {
             })
 
             userRepository.save(ifuser)
+
+            return ifuser.roles
+        } else {
+            throw NoSuchUserException("no such user: ${id}")
         }
 
-        return ifuser
     }
 
     fun findOne(id: Long): User? {
@@ -118,5 +133,9 @@ class UserService: UserDetailsService {
 
     fun findOne(name: String): User? {
         return userRepository.findByName(name)
+    }
+
+    fun updateOne(user: User): User {
+        return userRepository.save(user)
     }
 }

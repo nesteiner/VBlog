@@ -52,9 +52,4 @@ class RoleController {
         roleService.deleteOne(id)
         return Response.Ok("delete ok", Status.Ok)
     }
-
-    @PutMapping
-    fun updateOne(@RequestBody data: Role): Response<Role> {
-        return Response.Ok("update ok", roleService.updateOne(data))
-    }
 }

@@ -47,6 +47,12 @@ const routes: Array<RouteRecordRaw> = [
         path: "category-manage",
         name: "category-manage",
         component: () => import("@/components/CategoryManage.vue")
+      },
+      
+      {
+        path: "user-manage",
+        name: "user-manage",
+        component: () => import("@/components/UserManage.vue")
       }
     ]
   },

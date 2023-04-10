@@ -135,7 +135,6 @@ const saveBlog = async (state: number) => {
 
     if (from.value == "edit") {
       let id = parseInt(route.query["id"] as string)
-      let existArticle: Article = await findArticle(id)
       
       let request: UpdateArticleRequest = {
         id,

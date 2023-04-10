@@ -41,14 +41,30 @@ class BackendApplicationTests {
 
     @Test
     fun injectUsers() {
-        val roleUser = roleService.findOne("user")!!
-        val roleAdmin = roleService.findOne("admin")!!
-        val users = listOf<RegisterUserRequest>(
-            RegisterUserRequest("hello", "5f4dcc3b5aa765d61d8327deb882cf99", "world", "steiner3044@163.com", "empty", listOf(roleUser)),
-            RegisterUserRequest("admin", "5f4dcc3b5aa765d61d8327deb882cf99", "steiner", "steiner3044@163.com", "empty", listOf(roleAdmin))
-        )
+        var roleUser = roleService.findOne("user")
+        var roleAdmin = roleService.findOne("admin")
 
-        users.forEach { userService.register(it) }
+        if (roleUser == null) {
+            roleUser = roleService.insertOne(RegisterRoleRequest("user"))
+        }
+
+        if(roleAdmin == null) {
+            roleAdmin = roleService.insertOne(RegisterRoleRequest("admin"))
+        }
+
+        val userHello = userService.findOne("hello")
+        val userAdmin = userService.findOne("admin")
+
+        if (userHello != null) {
+            userHello.userface = "http://localhost/api/image/download/1"
+            userService.updateOne(userHello)
+        }
+
+        if (userAdmin != null) {
+            userAdmin.userface = "http://localhost/api/image/download/2"
+            userService.updateOne(userAdmin)
+        }
+
     }
 
     @Test

@@ -29,7 +29,7 @@ class User(
     var email: String,
 
     @Column(length = 255, nullable = false)
-    val userface: String,
+    var userface: String,
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)

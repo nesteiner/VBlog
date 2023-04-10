@@ -20,5 +20,7 @@ class UserRole(
     inner class UPK(
         val userid: Long,
         val roleid: Long
-    ): Serializable
+    ): Serializable {
+        constructor(): this(0, 0)
+    }
 }

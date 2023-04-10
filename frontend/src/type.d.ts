@@ -24,7 +24,8 @@ declare interface User {
 	nickname: string,
 	enabled: boolean,
 	email: string,
-	userface: string
+	userface: string,
+	registerTime: string
 }
 
 declare interface RegisterUserRequest {
