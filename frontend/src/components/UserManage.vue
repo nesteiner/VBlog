@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading">
+  <div>
     <Row class="header" main-axis-aligment="center">
       <el-input placeholder="默认展示部分用户，可以通过用户名搜索用户" :prefix-icon="Search"
                 v-model="keywords" size="small"/>
@@ -46,21 +46,23 @@
             <span>用户角色</span>
             <template v-for="role in user.roles" :key="role.id">
               <el-tag size="small" type="success">{{ role.name }}</el-tag>
-              <el-popover placement="right" :width="200" @hide="saveRoles(user.id, index)"
-                          :disabled="username == user.name"
-                          trigger="click" v-loading="eploading[index]">
-                
-                  <el-select v-model="roleids" :key="user.id" multiple placeholder="请选择" size="small">
-                    <template v-for="(item, index) in roles" :key="index">
-                      <el-option :label="item.name" :value="item.id"/>
-                    </template>
-                  </el-select>
-
-                  <template #reference>
-                    <el-button type="default" :icon="More" @click="showRole(user.roles, user.id, index)"/>
-                  </template>
-              </el-popover>
             </template>
+            
+            <el-popover placement="right" :width="200" @hide="saveRoles(user.id, index)"
+                        :disabled="username == user.name"
+                        trigger="click" v-loading="eploading[index]">
+              
+                <el-select v-model="roleids" :key="user.id" multiple placeholder="请选择" size="small">
+                  <template v-for="item in roles" :key="`${item.id}-${user.id}`">
+                    <el-option :label="item.name" :value="item.id"/>
+                  </template>
+                </el-select>
+
+                <template #reference>
+                  <el-button type="default" :icon="More" @click="showRole(user.roles, user.id, index)"/>
+                </template>
+            </el-popover>
+          
           </Row>
         </el-card>
       </template>

@@ -17,7 +17,7 @@ class UserRole(
     @Column(nullable = false)
     val roleid: Long
 ) {
-    inner class UPK(
+    class UPK(
         val userid: Long,
         val roleid: Long
     ): Serializable {

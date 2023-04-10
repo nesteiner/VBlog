@@ -4,6 +4,7 @@ import com.example.backend.exception.NoSuchUserException
 import com.example.backend.model.Role
 import com.example.backend.model.User
 import com.example.backend.model.UserRole
+import com.example.backend.repository.ArticleRepository
 import com.example.backend.repository.RoleRepository
 import com.example.backend.repository.UserRepository
 import com.example.backend.repository.UserRoleRepository
@@ -32,6 +33,8 @@ class UserService: UserDetailsService {
     lateinit var roleRepository: RoleRepository
     @Autowired
     lateinit var userRoleRepository: UserRoleRepository
+    @Autowired
+    lateinit var articleRepository: ArticleRepository
     override fun loadUserByUsername(username: String): UserDetails {
         val ifuser = userRepository.findByName(username)
         if (ifuser == null) {
@@ -96,7 +99,11 @@ class UserService: UserDetailsService {
     }
 
     fun deleteOne(id: Long) {
-        userRepository.deleteById(id)
+        val user = userRepository.findByIdOrNull(id)
+        if (user != null) {
+            userRepository.deleteById(id)
+            articleRepository.deleteAllByAuthor(user)
+        }
     }
 
     fun updateRoles(id: Long, rids: Array<Long>): List<Role> {
@@ -114,12 +121,7 @@ class UserService: UserDetailsService {
                 roleRepository.findByIdOrNull(it)!!
             }
 
-            userRoleRepository.saveAll(rids.map {
-                UserRole(id, it)
-            })
-
             userRepository.save(ifuser)
-
             return ifuser.roles
         } else {
             throw NoSuchUserException("no such user: ${id}")

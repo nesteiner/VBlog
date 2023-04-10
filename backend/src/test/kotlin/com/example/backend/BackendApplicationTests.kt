@@ -57,11 +57,13 @@ class BackendApplicationTests {
 
         if (userHello != null) {
             userHello.userface = "http://localhost/api/image/download/1"
+            userHello.roles = listOf(roleUser)
             userService.updateOne(userHello)
         }
 
         if (userAdmin != null) {
             userAdmin.userface = "http://localhost/api/image/download/2"
+            userAdmin.roles = listOf(roleAdmin)
             userService.updateOne(userAdmin)
         }
 
