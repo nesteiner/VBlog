@@ -1,26 +1,5 @@
 #+title: Scaffold 脚手架
 
-* Progress
-** Frontend
-- [X] 主页
-- [X] 删除失败
-- [X] 删除和显示不同步
-- [X] 草稿箱功能
-- [X] 回收站功能 v-if ??
-- [X] 删除操作
-- [X] 栏目管理
-- [X] 请求时 state = ?
-- [X] 添加 Category
-- [X] 用户管理
-- [ ] 用户管理 + 用户 enabled
-- [X] Update Roles: Unable to locate constructor for embeddable : com.example.backend.model.UserRole$UPK
-- [X] Update Roles: Duplicate entry '2-1' for key 'PRIMARY'
-** Backend
-- [X] Article state 添加一个字段 state = DELETED/3, state = DUSTBIN/2
-
-** PROBLEM
-- [X] enabledChange(user.enabled) ?
-
 * 介绍
 这个项目参考了 江南一点雨 大佬的 *VBlog* 项目，原先后端都抄了一遍，抄明白后，自己用 Kotlin 写了自己的后端
 我并没有使用 mybatis 来作为 ORM ，而是使用 JPA 作为与数据库的交互，主要是因为 mybatis 抄的时候发现自己用的是 Kotlin ，里面的构造方法要求
@@ -28,6 +7,17 @@
 前端也是抄的，不过使用了 Vue3 和 Typescript 语法，编辑器插件使用了其他的插件
 总结下来，这个项目我觉得非常适合供人学习，我的代码尽量写的简洁，没有冗余代码，欢迎大家 star
 
+** 技术栈
+*** 前端
+- Vue3 + setup
+- Element Plus
+- scratch components (自己写的)
+*** 后端
+- SpringBoot 3.0
+- Spring Security
+- Spring Data JPA
+- MySQL
+- Kotlin
 * 实例
 ** 登录页
 ** 主页
@@ -175,3 +165,29 @@
   }
 
 #+end_src
+
+* Progress
+** Frontend
+- [X] 主页
+- [X] 删除失败
+- [X] 删除和显示不同步
+- [X] 草稿箱功能
+- [X] 回收站功能 v-if ??
+- [X] 删除操作
+- [X] 栏目管理
+- [X] 请求时 state = ?
+- [X] 添加 Category
+- [X] 用户管理
+- [ ] 用户管理 + 用户 enabled
+- [X] Update Roles: Unable to locate constructor for embeddable : com.example.backend.model.UserRole$UPK
+- [X] Update Roles: Duplicate entry '2-1' for key 'PRIMARY'
+** Backend
+- [X] Article state 添加一个字段 state = DELETED/3, state = DUSTBIN/2
+
+** PROBLEM
+- [X] enabledChange(user.enabled) ?
+
+** Feature
+- [ ] add role
+- [ ] add user
+- [ ] user enabled

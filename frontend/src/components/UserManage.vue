@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="user-manage">
     <Row class="header" main-axis-aligment="center">
       <el-input placeholder="默认展示部分用户，可以通过用户名搜索用户" :prefix-icon="Search"
                 v-model="keywords" size="small"/>
