@@ -1,4 +1,4 @@
-#+title: Scaffold 脚手架
+#+title: My Own VBlog 
 
 * 介绍
 这个项目参考了 江南一点雨 大佬的 *VBlog* 项目，原先后端都抄了一遍，抄明白后，自己用 Kotlin 写了自己的后端
@@ -37,130 +37,130 @@
 
 
   events {
-      worker_connections  1024;
+  worker_connections  1024;
   }
 
 
   http {
-      include       mime.types;
-      # default_type  application/octet-stream;
-      default_type application/json;
+  include       mime.types;
+  # default_type  application/octet-stream;
+  default_type application/json;
 
-      #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-      #                  '$status $body_bytes_sent "$http_referer" '
-      #                  '"$http_user_agent" "$http_x_forwarded_for"';
+  #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+  #                  '$status $body_bytes_sent "$http_referer" '
+  #                  '"$http_user_agent" "$http_x_forwarded_for"';
 
-      #access_log  logs/access.log  main;
+  #access_log  logs/access.log  main;
 
-      sendfile        on;
-      #tcp_nopush     on;
+  sendfile        on;
+  #tcp_nopush     on;
 
-      #keepalive_timeout  0;
-      keepalive_timeout  65;
+  #keepalive_timeout  0;
+  keepalive_timeout  65;
 
-      #gzip  on;
+  #gzip  on;
 
-      server {
-          listen       80;
-          server_name  localhost;
+  server {
+  listen       80;
+  server_name  localhost;
 
-          #charset koi8-r;
+  #charset koi8-r;
 
-          #access_log  logs/host.access.log  main;
+  #access_log  logs/host.access.log  main;
 
-          # location / {
-          #     root   /usr/share/nginx/html;
-          #     index  index.html index.htm;
-          # }
+  # location / {
+  #     root   /usr/share/nginx/html;
+  #     index  index.html index.htm;
+  # }
 
-          location / {
-              root /home/steiner/workspace/sayhello/frontend/dist;
-              index index.html;
-              try_files $uri $uri/ /index.html;
-          }
+  location / {
+  root /home/steiner/workspace/sayhello/frontend/dist;
+  index index.html;
+  try_files $uri $uri/ /index.html;
+  }
 
-          location /api {
-              proxy_pass http://localhost:8082/api;
-              add_header Access-Control-Allow-Origin * always;
-              add_header Access-Control-Allow-Methods * always;
-              add_header Access-Control-Allow-Headers * always;
+  location /api {
+  proxy_pass http://localhost:8082/api;
+  add_header Access-Control-Allow-Origin * always;
+  add_header Access-Control-Allow-Methods * always;
+  add_header Access-Control-Allow-Headers * always;
 
-              if ($request_method = 'OPTIONS') {
-                 add_header Access-Control-Allow-Origin * always;
-                 add_header Access-Control-Allow-Methods * always;
-                 add_header Access-Control-Allow-Headers * always;
-                 return 204;     
-              }
-          }
+  if ($request_method = 'OPTIONS') {
+  add_header Access-Control-Allow-Origin * always;
+  add_header Access-Control-Allow-Methods * always;
+  add_header Access-Control-Allow-Headers * always;
+  return 204;     
+  }
+  }
 
-          #error_page  404              /404.html;
+  #error_page  404              /404.html;
 
-          # redirect server error pages to the static page /50x.html
-          #
-          error_page   500 502 503 504  /50x.html;
-          location = /50x.html {
-              root   /usr/share/nginx/html;
-          }
+  # redirect server error pages to the static page /50x.html
+  #
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {
+  root   /usr/share/nginx/html;
+  }
 
-          # proxy the PHP scripts to Apache listening on 127.0.0.1:80
-          #
-          #location ~ \.php$ {
-          #    proxy_pass   http://127.0.0.1;
-          #}
+  # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+  #
+  #location ~ \.php$ {
+  #    proxy_pass   http://127.0.0.1;
+  #}
 
-          # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-          #
-          #location ~ \.php$ {
-          #    root           html;
-          #    fastcgi_pass   127.0.0.1:9000;
-          #    fastcgi_index  index.php;
-          #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
-          #    include        fastcgi_params;
-          #}
+  # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+  #
+  #location ~ \.php$ {
+  #    root           html;
+  #    fastcgi_pass   127.0.0.1:9000;
+  #    fastcgi_index  index.php;
+  #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+  #    include        fastcgi_params;
+  #}
 
-          # deny access to .htaccess files, if Apache's document root
-          # concurs with nginx's one
-          #
-          #location ~ /\.ht {
-          #    deny  all;
-          #}
-      }
-
-
-      # another virtual host using mix of IP-, name-, and port-based configuration
-      #
-      #server {
-      #    listen       8000;
-      #    listen       somename:8080;
-      #    server_name  somename  alias  another.alias;
-
-      #    location / {
-      #        root   html;
-      #        index  index.html index.htm;
-      #    }
-      #}
+  # deny access to .htaccess files, if Apache's document root
+  # concurs with nginx's one
+  #
+  #location ~ /\.ht {
+  #    deny  all;
+  #}
+  }
 
 
-      # HTTPS server
-      #
-      #server {
-      #    listen       443 ssl;
-      #    server_name  localhost;
+  # another virtual host using mix of IP-, name-, and port-based configuration
+  #
+  #server {
+  #    listen       8000;
+  #    listen       somename:8080;
+  #    server_name  somename  alias  another.alias;
 
-      #    ssl_certificate      cert.pem;
-      #    ssl_certificate_key  cert.key;
+  #    location / {
+  #        root   html;
+  #        index  index.html index.htm;
+  #    }
+  #}
 
-      #    ssl_session_cache    shared:SSL:1m;
-      #    ssl_session_timeout  5m;
 
-      #    ssl_ciphers  HIGH:!aNULL:!MD5;
-      #    ssl_prefer_server_ciphers  on;
+  # HTTPS server
+  #
+  #server {
+  #    listen       443 ssl;
+  #    server_name  localhost;
 
-      #    location / {
-      #        root   html;
-      #        index  index.html index.htm;
-      #    }
-      #}
+  #    ssl_certificate      cert.pem;
+  #    ssl_certificate_key  cert.key;
+
+  #    ssl_session_cache    shared:SSL:1m;
+  #    ssl_session_timeout  5m;
+
+  #    ssl_ciphers  HIGH:!aNULL:!MD5;
+  #    ssl_prefer_server_ciphers  on;
+
+  #    location / {
+  #        root   html;
+  #        index  index.html index.htm;
+  #    }
+  #}
 
   }
 
