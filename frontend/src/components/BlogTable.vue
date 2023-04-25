@@ -154,7 +154,7 @@ const handleSelectionChange = (val: Article[]) => {
 }
 
 const handleEdit = (index: number, row: Article) => {
-  router.push({path: "/editBlog", query: {from: "edit", id: row.id}})
+  router.push({path: "edit-blog", query: {from: "edit", id: row.id}})
 }
 
 const handleDelete = async (index: number, row: Article) => {

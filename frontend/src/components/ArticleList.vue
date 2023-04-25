@@ -47,7 +47,6 @@ import {ElContainer, ElMain, ElTabs, ElTabPane} from "element-plus"
 import {Tab, TabItem} from "@/components/tab"
 import BlogTable from "@/components/BlogTable.vue"
 
-const activeName = ref("post")
 const isadminRef = ref(false)
 
 onMounted(async () => {
