@@ -196,8 +196,17 @@
 
 这里你需要更改 =location /= 这里的 =root= 选项，把他改为 *前端的 dist* 目录
 ** 后端
-这个你用IDEA打开 =backend= 项目，在IDEA里运行 =BackendApplication.main()= 方法就行了
-为什么这样呢，因为我不会 build 这个项目，先这样凑合着吧
+在 =backend= 目录下，输入
+#+begin_src bash
+  ./gradlew build -x test
+#+end_src
+
+然后，运行
+#+begin_src bash
+  java -jar build/libs/backend-0.0.1-SNAPSHOT.jar
+#+end_src
+
+注意，使用的java版本要大于等于17
 ** 前端
 进入前端目录，执行 =yarn build=
 
