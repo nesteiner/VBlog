@@ -1,6 +1,7 @@
 package com.example.backend.controller
 
 import com.example.backend.exception.NoSuchUserException
+import com.example.backend.exception.RegisterException
 import com.example.backend.model.Article
 import com.example.backend.model.Role
 import com.example.backend.model.User
@@ -41,39 +42,42 @@ class AdminController {
     lateinit var articleService: ArticleService
 
     @PostMapping("/register")
-    fun insertUser(@RequestBody @Valid data: RegisterUserRequest): Response<User?> {
+    fun insertUser(@RequestBody @Valid data: RegisterUserRequest): Response<User> {
         // return Response.Ok("insert ok", userService.register(data))
         val ifuser = userService.register(data)
-        if (ifuser == null) {
-            return Response.Err("register failed", null)
+        return if (ifuser == null) {
+            throw RegisterException("register failed")
         } else {
-            return Response.Ok("register ok", ifuser)
+            Response.Ok("register ok", ifuser)
         }
     }
 
     @DeleteMapping("/user/{id}")
     @Throws(NoSuchUserException::class)
     fun deleteUser(@PathVariable id: Long): Response<Status> {
-        userService.deleteOne(id)
+        val steiner = userService.findSteiner()
+        if (steiner.id != id) {
+            userService.deleteOne(id)
+        }
         return Response.Ok("delete ok", Status.Ok)
     }
 
     @GetMapping("/user", params = ["nickname"])
     fun findAllUsersByNickname(@RequestParam("nickname") nickname: String): Response<List<User>> {
-        if (nickname == "") {
-            return Response.Ok("all users", userService.findAll())
+        return if (nickname == "") {
+            Response.Ok("all users", userService.findAll())
         } else {
-            return Response.Ok("these users", userService.findAllByNichname(nickname))
+            Response.Ok("these users", userService.findAllByNichname(nickname))
         }
     }
 
     @GetMapping("/user/{id}")
-    fun findUserById(@PathVariable id: Long): Response<User?> {
+    fun findUserById(@PathVariable id: Long): Response<User> {
         val ifuser = userService.findOne(id)
-        if (ifuser == null) {
-            return Response.Err("no such user", null)
+        return if (ifuser == null) {
+            throw NoSuchUserException("no such user")
         } else {
-            return Response.Ok("this user", ifuser)
+            Response.Ok("this user", ifuser)
         }
     }
 

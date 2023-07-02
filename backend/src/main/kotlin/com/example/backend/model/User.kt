@@ -41,5 +41,5 @@ class User(
         joinColumns = [JoinColumn(name = "userid", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "roleid", referencedColumnName = "id")]
     )
-    var roles: List<Role>
+    var roles: List<Role>,
 )

@@ -39,10 +39,20 @@ async function currentUsername() {
     return response.data["data"]
 }
 
+async function changeAvatar(userid: number, userface: string) {
+    let response = await instance.put("/user/avatar", {
+        userid,
+        userface
+    })
+
+    return response.data["data"]
+}
+
 export {
     login,
     logout,
     register,
     isadmin,
-    currentUsername
+    currentUsername,
+    changeAvatar
 }

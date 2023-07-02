@@ -1,7 +1,6 @@
 package com.example.backend.filter
 
 import com.example.backend.exception.LoginException
-import com.example.backend.utils.ErrorStatus
 import com.example.backend.utils.JwtTokenUtil
 import com.example.backend.utils.Response
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -36,19 +35,19 @@ class LoginFilter : OncePerRequestFilter() {
                 request.setAttribute("jwtToken", jwtToken)
             } catch (exception: IllegalArgumentException) {
                 logger.error("unable to get jwt token")
-                val result = Response.Err("no token found", ErrorStatus.NoTokenFound.code)
+                val result = Response.Err("no token found")
                 response.status = 401
                 response.writer.write(objectMapper.writeValueAsString(result))
                 return
             } catch (exception: ExpiredJwtException) {
                 logger.error("jwt token has been expired")
-                val result = Response.Err("token expired", ErrorStatus.TokenExpired.code)
+                val result = Response.Err("token expired")
                 response.status = 401
                 response.writer.write(objectMapper.writeValueAsString(result))
                 return
             } catch (exception: Exception) {
                 logger.error("unknown error")
-                val result = Response.Err("unknow error", ErrorStatus.Unknown.code)
+                val result = Response.Err("unknow error")
                 response.status = 401
                 response.writer.write(objectMapper.writeValueAsString(result))
                 return
@@ -57,7 +56,7 @@ class LoginFilter : OncePerRequestFilter() {
             }
         } else if (requestTokenHeader != null && !requestTokenHeader.startsWith("Bearer ")) {
             logger.warn("jwt token does not begin with bearer string")
-            val result = Response.Err("jwt token does not begin with bearer string", ErrorStatus.TokenParseError.code)
+            val result = Response.Err("jwt token does not begin with bearer string")
             response.status = 401
             response.writer.write(objectMapper.writeValueAsString(result))
             return

@@ -8,8 +8,8 @@ data class Response<T>(val code: Status, val message: String, val data: T?) {
         }
 
         @JvmStatic
-        fun <T> Err(message: String, data: T): Response<T> {
-            return Response(Status.Err, message, data)
+        fun Err(message: String): Response<Unit> {
+            return Response(Status.Err, message, null)
         }
     }
 }

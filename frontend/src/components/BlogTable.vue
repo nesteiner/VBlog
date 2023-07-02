@@ -79,7 +79,7 @@
 
 
 <script lang="ts" setup>
-import { findAllArticles, findAllArticlesByState, restoreArticle, updateArticleState } from '@/api';
+import { deleteArticle, findAllArticles, findAllArticlesByState, restoreArticle, updateArticleState } from '@/api';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import {ElMessage, ElInput, ElButton, ElTable, ElTableColumn, ElPagination, vLoading} from "element-plus"
@@ -92,13 +92,15 @@ const props = withDefaults(
     state: number,
     showEdit?: boolean,
     showDelete?: boolean,
-    showRestore?: boolean
+    showRestore?: boolean,
+    remove?: boolean
   }>(),
 
   {
     showEdit: false,
     showDelete: false,
-    showRestore: false
+    showRestore: false,
+    remove: false
   }
 )
 
@@ -160,19 +162,21 @@ const handleEdit = (index: number, row: Article) => {
 const handleDelete = async (index: number, row: Article) => {
   let flag = confirm("删除这个文章?")
   loading.value = true
-  if (flag) {
-    dustbinData.value.push(row.id!)
-    try {
-      await updateArticleState(row.id!, 2)
-    } catch (error: any) {
-      ElMessage.error("更新状态失败")
-    } finally {
-      loading.value = false
-    }
-    articles.value.splice(index, 1)
-  }
 
-  loading.value = false
+  try {
+    if (flag && !props.remove) {
+      await updateArticleState(row.id!, 2)
+      articles.value.splice(index, 1)
+    } else if (flag && props.remove) {
+      await deleteArticle(row.id!)
+      articles.value.splice(index, 1)
+    }
+  } catch (error: any) {
+    ElMessage.error("更新状态失败")
+  } finally {
+    loading.value = false
+  }
+  
 }
 
 const deleteMany = async () => {
@@ -180,7 +184,11 @@ const deleteMany = async () => {
     dustbinData.value.push(item.id!)
   }
 
-  deleteToDustbin(2)
+  if (props.remove) {
+    deleteToDustbin(2)
+  } else {
+    deleteToDustbin(3)
+  }
 }
 
 const handleRestore = async (index: number, row: Article) => {

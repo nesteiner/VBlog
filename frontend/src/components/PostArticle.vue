@@ -59,7 +59,7 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElContainer, ElHeader, ElSelect, ElOption, ElInput, ElTag, ElMain, ElButton, vLoading } from "element-plus";
 import { findAllCategories, findArticle, insertArticle, uploadImage } from "@/api";
 import { Row, SizedBox } from "scratch-components";
-import MdEditor from "md-editor-v3"
+import {MdEditor} from "md-editor-v3"
 import type {ExposeParam} from "md-editor-v3"
 import "md-editor-v3/lib/style.css"
 import {insertTag, updateArticle} from "@/api"
@@ -319,7 +319,6 @@ onMounted(async () => {
 
     #editor {
       width: 100%;
-      height: 450px;
       text-align: left;
     }
   }

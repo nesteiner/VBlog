@@ -1,0 +1,34 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/vblog
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: steiner
+    password: mysql30449030
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: iot.technology
+
+open:
+  urls:
+    - /authenticate
+    - /image/**
+  roles:
+    - user
+    - admin
+
+file:
+  storage:
+    url: /home/steiner/workspace/VBlog/storage

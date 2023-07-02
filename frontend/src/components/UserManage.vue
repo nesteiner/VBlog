@@ -12,12 +12,16 @@
           <template #header>
             <div class="nickname">
               <span>{{ user.nickname }}</span>
-              <el-button :icon="Delete" @click="deleteUser(user.id)">删除</el-button>
+              <el-button :icon="Delete" @click="deleteUser(user.id)" :disabled="username == user.name">删除</el-button>
             </div>
           </template>
 
           <div class="info">
-            <div class="userface"><img :src="user.userface" :alt="user.nickname"/></div>
+            <!-- <div class="userface"><img :src="user.userface" :alt="user.nickname"/></div> -->
+            <Center class="userface">
+              <ImageUpload :default-url="user.userface" @input="onInputImage(user, $event)"/>
+            </Center>
+
             <div class="name">
               <span>用户名:</span>
               <span>{{ user.name }}</span>
@@ -50,7 +54,7 @@
             
             <el-popover placement="right" :width="200" @hide="saveRoles(user.id, index)"
                         :disabled="username == user.name"
-                        trigger="click" v-loading="eploading[index]">
+                        trigger="click">
               
                 <el-select v-model="roleids" :key="user.id" multiple placeholder="请选择" size="small">
                   <template v-for="item in roles" :key="`${item.id}-${user.id}`">
@@ -67,17 +71,53 @@
         </el-card>
       </template>
     </Row>
+
+    <FloatingActionButton :on-pressed="onPressed"/>
+
+    <el-dialog v-model="showDialog" title="添加用户">
+      <el-form :model="registerData">
+        <el-form-item label="名字">
+          <el-input v-model="registerData.name"/>
+        </el-form-item>
+
+        <el-form-item label="角色">
+          <el-select v-model="registerData.roles" placeholder="please select your roles" multiple>
+            <template v-for="(role, index) in roles" :key="index">
+              <el-option :label="role.name" :value="role"/>
+            </template>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="密码">
+          <el-input type="password" placeholder="input your password" v-model="registerData.passwordHash"/>
+        </el-form-item>
+
+        <el-form-item label="昵称">
+          <el-input placeholder="input your nickname" v-model="registerData.nickname"/>
+        </el-form-item>
+
+        <el-form-item label="邮箱">
+          <el-input type="email" placeholder="input your email" v-model="registerData.email"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">Create</el-button>
+          <el-button @click="onCancel">Cancel</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { currentUsername, deleteUserByAdmin, findAllUsersByNickname, findRoles, updateRoles, updateUserEnabled } from '@/api';
+import { changeAvatar, currentUsername, deleteUserByAdmin, findAllUsersByNickname, findRoles, register, updateRoles, updateUserEnabled, uploadImage } from '@/api';
 import { ElMessage, vLoading, ElInput, ElButton, 
   ElCard, ElSwitch, ElPopover, ElSelect, ElTag,
-  ElOption } from 'element-plus';
+  ElOption, ElDialog, ElForm, ElFormItem } from 'element-plus';
 import {Search, Delete, More} from "@element-plus/icons"
-import { Row } from 'scratch-components';
-import { ref, onMounted } from 'vue';
+import { Center, Row } from 'scratch-components';
+import { ref, onMounted, reactive } from 'vue';
+import {FloatingActionButton} from "@/components/floating-action-button"
+import ImageUpload from './ImageUpload.vue';
 
 const loading = ref(false)
 const eploading = ref([] as boolean[])
@@ -89,6 +129,17 @@ const roleids = ref([] as number[])
 const cproles = ref([] as Role[])
 const username = ref("")
 
+const showDialog = ref(false)
+const defaultRegisterData: RegisterUserRequest = {
+  name: "",
+	roles: [] as Role[],
+	passwordHash: "",
+	nickname: "",
+	email: "",
+	userface: "http://localhost/api/image/download/1"
+}
+
+const registerData = ref<RegisterUserRequest>(defaultRegisterData)
 
 const saveRoles = async (id: number, index: number) => {
   if (cproles.value.length == roleids.value.length) {
@@ -204,12 +255,43 @@ const searchClick = async () => {
   await loadUsers()
 }
 
+const onPressed = () => {
+  registerData.value = defaultRegisterData
+  showDialog.value = true
+}
+
+const onSubmit = async () => {
+  try {
+    let user = await register(registerData.value)
+    users.value.push(user)
+  } catch (error: any) {
+    ElMessage.error("添加用户失败")
+  } finally {
+    showDialog.value = false
+  }
+  
+}
+
+const onCancel = () => {
+  showDialog.value = false
+}
+
+const onInputImage = async (user: User, file: File) => {
+  try {
+    let imageitem = await uploadImage(file)
+    user.userface = `http://localhost/api/image/download/${imageitem.id}`
+    await changeAvatar(user.id, user.userface)
+  } catch (error: any) {
+    ElMessage.error("更新头像失败")
+  }
+}
+
 onMounted(async () => {
   loading.value = true
   await loadUsers()
   cardloading.value = Array.apply(null, Array(20)).map((item, i) => false)
   eploading.value = Array.apply(null, Array(20)).map((item, i) => false)
-
+  roles.value = await findRoles()
   username.value = await currentUsername()
 })
 </script>
@@ -238,13 +320,6 @@ onMounted(async () => {
   }
 
   .info {
-    .userface {
-      img {
-        width: 70px;
-        height: 70px;
-      }
-    }
-
     .name {
       text-align: left;    
       color: #20a0ff;

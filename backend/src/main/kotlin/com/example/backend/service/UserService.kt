@@ -133,6 +133,9 @@ class UserService: UserDetailsService {
         return userRepository.findByIdOrNull(id)
     }
 
+    fun findSteiner(): User {
+        return userRepository.findByName("steiner") ?: throw NoSuchUserException("no such user steiner")
+    }
     fun findOne(name: String): User? {
         return userRepository.findByName(name)
     }

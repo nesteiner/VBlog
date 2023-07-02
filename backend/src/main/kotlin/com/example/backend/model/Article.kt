@@ -39,6 +39,7 @@ class Article(
     val publishDate: Timestamp,
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
     var editTime: Timestamp,
 
     @Column(nullable = false)

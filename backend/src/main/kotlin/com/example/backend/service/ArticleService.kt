@@ -2,6 +2,7 @@ package com.example.backend.service
 
 import com.example.backend.exception.NoSuchUserException
 import com.example.backend.model.Article
+import com.example.backend.model.ArticleShortcut
 import com.example.backend.model.ArticleTag
 import com.example.backend.repository.ArticleRepository
 import com.example.backend.repository.ArticleTagRepository
@@ -71,16 +72,12 @@ class ArticleService {
         }
     }
 
-    fun findAllByState(state: Int, userid: Long, keywords: String, pageable: Pageable): Page<Article> {
+    fun findAllByState(state: Int, userid: Long, keywords: String, pageable: Pageable): Page<ArticleShortcut> {
         return articleRepository.findAllByState(state, userid, keywords, pageable)
     }
 
-    fun findAllByState(state: Int, userid: Long, pageable: Pageable): Page<Article> {
+    fun findAllByState(state: Int, userid: Long, pageable: Pageable): Page<ArticleShortcut> {
         return articleRepository.findAllByState(state, userid, pageable)
-    }
-
-    fun findAllByState(state: Int, keywords: String, pageable: Pageable): Page<Article> {
-        return articleRepository.findAllByState(state, keywords, pageable)
     }
 
     fun findAll(pageable: Pageable): Page<Article> {

@@ -33,7 +33,6 @@ declare interface RegisterUserRequest {
 	roles: Role[],
 	passwordHash: string,
 	nickname: string,
-	enabled: boolean,
 	email: string,
 	userface: string
 }
@@ -57,8 +56,19 @@ declare interface RegisterTagRequest {
 	name: string
 }
 
+declare interface ArticleShortcut {
+	id: number,
+	title: string,
+	summary: string,
+	category: Category,
+	author: User,
+	publishDate: string,
+	editTime: string,
+	state: number,
+}
+
 declare interface Article {
-	id?: number,
+	id: number,
 	title: string,
 	markdownContent: string,
 	htmlContent: string,

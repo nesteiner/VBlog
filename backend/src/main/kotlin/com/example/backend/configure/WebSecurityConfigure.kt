@@ -6,6 +6,7 @@ import com.example.backend.filter.LoginFilter
 import com.example.backend.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties(OpenConfigure::class)
 class WebSecurityConfigure {
     @Autowired
     @Throws(Exception::class)
@@ -32,10 +34,8 @@ class WebSecurityConfigure {
             .passwordEncoder(mD5PasswordEncoder)
     }
 
-    @Value("\${open.urls}")
-    lateinit var openUrls: Array<String>
-    @Value("\${open.roles}")
-    lateinit var openRoles: Array<String>
+    @Autowired
+    lateinit var openConfigure: OpenConfigure
 
     @Bean
     @Throws(Exception::class)
@@ -49,11 +49,11 @@ class WebSecurityConfigure {
         http.csrf().disable()
             .authorizeHttpRequests()
 //            .requestMatchers(authenticateUrl, registerUrl).permitAll()
-            .requestMatchers(*openUrls).permitAll()
+            .requestMatchers(*openConfigure.urls).permitAll()
             .requestMatchers("/admin/**").hasAuthority("admin")
-            .requestMatchers("/user/**").hasAnyAuthority(*openRoles)
-            .requestMatchers("/tag/**").hasAnyAuthority(*openRoles)
-            .requestMatchers("/category/**").hasAnyAuthority(*openRoles)
+            .requestMatchers("/user/**").hasAnyAuthority(*openConfigure.roles)
+            .requestMatchers("/tag/**").hasAnyAuthority(*openConfigure.roles)
+            .requestMatchers("/category/**").hasAnyAuthority(*openConfigure.roles)
             .and()
             .authorizeHttpRequests().requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .anyRequest().authenticated()

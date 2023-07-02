@@ -32,18 +32,13 @@ class ImageItemController(
 
 
     @PostMapping("/upload")
-    fun uploadImage(@RequestParam("file") image: MultipartFile): Response<ImageItem?> {
+    fun uploadImage(@RequestParam("file") image: MultipartFile): Response<ImageItem> {
         val filename = image.originalFilename ?: "untitled"
         val filepath = "${imagefolderPath}/${UUID.randomUUID()}_${sdf.format(Date())}_${filename.replace(" ", "")}"
         val imageitem = imageItemService.insertOne(filename, filepath)
 
-        try {
-            image.transferTo(File(filepath))
-            return Response.Ok("upload ok", imageitem)
-        } catch (e: IOException){
-            return Response.Err(e.message ?: "error in transfer", null)
-        }
-
+        image.transferTo(File(filepath))
+        return Response.Ok("upload ok", imageitem)
     }
 
     @GetMapping("/download/{id}")

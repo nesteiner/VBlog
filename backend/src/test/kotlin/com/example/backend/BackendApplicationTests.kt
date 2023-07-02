@@ -1,6 +1,7 @@
 package com.example.backend
 
 import com.example.backend.model.*
+import com.example.backend.repository.ArticleRepository
 import com.example.backend.repository.CategoryRepository
 import com.example.backend.repository.TagRepository
 import com.example.backend.request.RegisterArticleRequest
@@ -14,6 +15,7 @@ import com.example.backend.service.UserService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
 @SpringBootTest
@@ -26,6 +28,8 @@ class BackendApplicationTests {
     lateinit var tagRepository: TagRepository
     @Autowired
     lateinit var categoryRepository: CategoryRepository
+    @Autowired
+    lateinit var articleRepository: ArticleRepository
     @Autowired
     lateinit var articleService: ArticleService
     @Test
@@ -127,6 +131,21 @@ class BackendApplicationTests {
 
         articles.forEach { articleService.insertOne(it) }
     }
+
+    @Test
+    fun testFind() {
+        val userid = userService.findOne("hello")!!.id!!
+        val state = Article.PUBLISHED
+        val pageable = PageRequest.of(0, 6)
+        articleRepository.findAllByState(state, userid, pageable).content.forEach {
+            println(it.id)
+        }
+
+//        articleRepository.findTest(state, userid).forEach {
+//            println(it)
+//        }
+    }
+
     @Test
     fun testThrow() {
         try {

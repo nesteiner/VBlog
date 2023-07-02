@@ -23,33 +23,51 @@
 
 * Start Up
 ** 配置项
-在 =backend/src/main/resources= 目录下有 =application.properties= 文件，
+在 =backend/src/main/resources= 目录下有 =application.yml= 文件，
 修改他的内容
-#+begin_src java
-  server.port=8082
-  server.servlet.context-path=/api
-  spring.datasource.url=jdbc:mysql://localhost:3306/vblog
-  spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-  spring.datasource.username=steiner
-  spring.datasource.password=mysql30449030
-  spring.jpa.hibernate.ddl-auto=none
+#+begin_src yaml
+  server:
+    port: 8082
+    servlet:
+      context-path: /api
 
-  spring.jpa.properties.hibernate.format_sql=true
-  spring.jpa.show-sql=true
-  spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  spring:
+    datasource:
+      url: jdbc:mysql://localhost:3306/vblog
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: steiner
+      password: your password
+    jpa:
+      hibernate:
+        ddl-auto: none
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      properties:
+        hibernate:
+          format_sql: true
 
-  jwt.secret=iot.technology
-  open.urls=/authenticate,/image/**
-  open.roles=user,admin
-  file.storage.url=/home/steiner/workspace/VBlog/storage
+  jwt:
+    secret: iot.technology
+
+  open:
+    urls:
+      - /authenticate
+      - /image/**
+    roles:
+      - user
+      - admin
+
+  file:
+    storage:
+      url: /home/steiner/workspace/VBlog/storage
 #+end_src
 
 你需要修改他的
 - =spring.datasource.url= 数据库地址
 - =spring.datasource.username= 数据库用户名
 - =spring.datasource.password= 数据库密码
-- =spring.jpa-hibernate.ddl-auto= 应用启动时对数据库的行为，把他设置成 =create=
-  ，下一次运行的时候记得改回来
+- =spring.jpa-hibernate.ddl-auto= 应用启动时对数据库的行为， *首先把他设置成 =create=
+  ，下一次运行的时候记得改回来*
 - =file.storage.url= 图片存储路径
 
 ** 开启 Nginx
@@ -243,6 +261,16 @@
 #+DOWNLOADED: screenshot @ 2023-04-25 22:26:09
 [[file:images/实例/2023-04-25_22-26-09_screenshot.png]]
 
+** 添加用户(管理员页面)
+
+
+#+DOWNLOADED: screenshot @ 2023-06-29 21:41:37
+[[file:images/实例/2023-06-29_21-41-37_screenshot.png]]
+** 更改头像(管理员页面)
+
+#+DOWNLOADED: screenshot @ 2023-06-29 21:43:09
+[[file:images/实例/2023-06-29_21-43-09_screenshot.png]]
+点击头像即可更改
 * Progress
 ** Frontend
 - [X] 主页
@@ -255,7 +283,7 @@
 - [X] 请求时 state = ?
 - [X] 添加 Category
 - [X] 用户管理
-- [ ] 用户管理 + 用户 enabled
+- [X] 用户管理 + 用户 enabled
 - [X] Update Roles: Unable to locate constructor for embeddable : com.example.backend.model.UserRole$UPK
 - [X] Update Roles: Duplicate entry '2-1' for key 'PRIMARY'
 ** Backend
@@ -265,6 +293,110 @@
 - [X] enabledChange(user.enabled) ?
 
 ** Feature
-- [ ] add role
-- [ ] add user
-- [ ] user enabled
+- [X] add user
+- [X] user enabled
+- [X] article shorcut
+
+* 未解决的问题
+我的 =ArticleRepository= 是这样的
+#+begin_src kotlin
+@Repository
+interface ArticleRepository: JpaRepository<Article, Long> {
+    @Query("select new com.example.backend.model.ArticleShortcut(a.id, a.title, a.summary, a.category, a.author, a.publishDate, a.editTime, a.state, a.tags) from Article a where a.state = ?1 and a.author.id = ?2 order by a.editTime desc")
+    fun findAllByState(state: Int, uid: Long, pageable: Pageable): Page<ArticleShortcut>
+
+    @Query("select a.tags from Article a where a.state = :state and a.author.id = :uid")
+    fun findTest(@Param("state") state: Int, @Param("uid") uid: Long): List<List<Tag>>
+}
+#+end_src
+
+这是 =ArticleShortcut=
+#+begin_src kotlin
+  class ArticleShortcut(
+      val id: Long,
+      val title: String,
+      val summary: String,
+      val category: Category,
+      val author: User,
+      val publishDate: Timestamp,
+      val editTime: Timestamp,
+      val state: Int,
+      val tags: List<Tag>
+  )
+#+end_src
+
+and I found that the =findAllByState= failed
+
+#+DOWNLOADED: screenshot @ 2023-07-02 22:09:54
+[[file:images/未解决的问题/2023-07-02_22-09-54_screenshot.png]]
+
+when I remove the `tags` filed in the `ArticleShortcut`, *everything is ok*
+but when I try to fetch the =tags= stand alone, the code is ok
+
+#+DOWNLOADED: screenshot @ 2023-07-02 22:10:50
+[[file:images/未解决的问题/2023-07-02_22-10-50_screenshot.png]]
+
+and this is my =Article= with =@ManyToMany= field
+#+begin_src kotlin
+  @Entity(name = "Article")
+  class Article(
+      @Id
+      @GeneratedValue(strategy = GenerationType.AUTO, generator = "myid")
+      @GenericGenerator(name = "myid", strategy = "com.example.backend.generator.ManualInsertGenerator")
+      val id: Long?,
+
+      @Column(length = 255, nullable = false)
+      var title: String,
+
+      @Lob
+      @Column(columnDefinition = "text", nullable = false)
+      var markdownContent: String,
+
+      @Lob
+      @Column(columnDefinition = "text", nullable = false)
+      var htmlContent: String,
+
+      @Lob
+      @Column(columnDefinition = "text", nullable = false)
+      var summary: String,
+
+      @OneToOne
+      @JoinColumn(name = "cid", referencedColumnName = "id")
+      var category: Category,
+
+      @ManyToOne
+      @JoinColumn(name = "aid", referencedColumnName = "id")
+      val author: User,
+
+      @Temporal(TemporalType.TIMESTAMP)
+      @Column(nullable = false)
+      val publishDate: Timestamp,
+
+      @Temporal(TemporalType.TIMESTAMP)
+      @Column(nullable = false)
+      var editTime: Timestamp,
+
+      @Column(nullable = false)
+      var state: Int,
+
+      @Column(nullable = false)
+      val pageView: Int,
+
+      @ManyToMany
+      @JoinTable(
+          name = "ArticleTag",
+          joinColumns = [JoinColumn(name = "articleid", referencedColumnName = "id")],
+          inverseJoinColumns = [JoinColumn(name = "tagid", referencedColumnName = "id")]
+      )
+      var tags: List<Tag>,
+  ) {
+      companion object {
+          const val SCRATCH = 0
+          const val PUBLISHED = 1
+          const val DUSTBIN = 2
+          const val DELETED = 3
+      }
+  }
+#+end_src
+
+你可以在 [[https://discord.com/channels/272761734820003841/1124706827737772092][在这里]] 查看完整聊天

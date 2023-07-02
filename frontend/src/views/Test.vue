@@ -1,9 +1,17 @@
 <template>
-  <BlogTable :state="1" active-name="hello" show-delete show-edit show-restore/>
+  <div class="test">
+    <ImageUpload @input="onInput" default-url="http://localhost/api/image/download/1"/>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import BlogTable from "@/components/BlogTable.vue"
+import ImageUpload from '@/components/ImageUpload.vue';
+import { ref } from 'vue';
+
+const onInput = (file: File) => {
+  alert("hello world")
+  console.log(file)
+}
 </script>
 
 <style lang="scss" scoped>
