@@ -1,9 +1,7 @@
 package com.example.backend
 
 import com.example.backend.model.*
-import com.example.backend.repository.ArticleRepository
-import com.example.backend.repository.CategoryRepository
-import com.example.backend.repository.TagRepository
+import com.example.backend.repository.*
 import com.example.backend.request.RegisterArticleRequest
 import com.example.backend.request.RegisterCategoryRequest
 import com.example.backend.request.RegisterRoleRequest
@@ -17,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import java.sql.Timestamp
+import java.time.LocalDateTime
 
 @SpringBootTest
 class BackendApplicationTests {
@@ -32,6 +32,81 @@ class BackendApplicationTests {
     lateinit var articleRepository: ArticleRepository
     @Autowired
     lateinit var articleService: ArticleService
+    @Autowired
+    lateinit var roleRepository: RoleRepository
+    @Autowired
+    lateinit var userRepository: UserRepository
+    @Autowired
+    lateinit var imageRepository: ImageItemRepository
+
+    @Test
+    fun clearAndInjectData() {
+        articleRepository.deleteAll()
+        userRepository.deleteAll()
+        roleRepository.deleteAll()
+        categoryRepository.deleteAll()
+        tagRepository.deleteAll()
+        imageRepository.deleteAll()
+
+        val roles = listOf(
+            Role(1L, "admin"),
+            Role(2L, "student")
+        )
+
+        roleRepository.saveAll(roles)
+
+        val categories = listOf(
+            Category(1L, "default"),
+            Category(2L, "hello"),
+            Category(3L, "world")
+        )
+
+        categoryRepository.saveAll(categories)
+
+        val tags = listOf(
+            Tag(1L, "tag1"),
+            Tag(2L, "tag2")
+        )
+
+        tagRepository.saveAll(tags)
+
+        val images = listOf(
+            ImageItem(1L, "扳手.png", "/home/steiner/workspace/VBlog/storage/0d832122-4416-427a-ae8e-d36f7f50e56f_20230401_扳手.png "),
+            ImageItem(2L, "225默认头像.png", "/home/steiner/workspace/VBlog/storage/d12dbed5-959b-4d84-b0b9-4e65c9ce2637_20230401_225默认头像.png")
+        )
+
+        imageRepository.saveAll(images)
+
+        val users = listOf(
+            User(1L,
+                "admin",
+                "5f4dcc3b5aa765d61d8327deb882cf99",
+                "steiner",
+                true,
+                "steiner3044@163.com",
+                "http://localhost/api/image/download/1",
+                Timestamp.valueOf(
+                    LocalDateTime.now()),
+                listOf(roles[0])
+            ),
+
+            User(1L,
+                "hello",
+                "5f4dcc3b5aa765d61d8327deb882cf99",
+                "world",
+                true,
+                "steiner3044@163.com",
+                "http://localhost/api/image/download/2",
+                Timestamp.valueOf(
+                    LocalDateTime.now()),
+                listOf(roles[1])
+            ),
+        )
+
+        userRepository.saveAll(users)
+
+    }
+
     @Test
     fun injectRoles() {
         val roleRequests = listOf<RegisterRoleRequest>(

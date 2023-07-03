@@ -216,6 +216,10 @@
 ** 后端
 在 =backend= 目录下，输入
 #+begin_src bash
+  ./gradlew test --tests "com.backend.backend.BackendApplicationTests.clearAndInjectData"
+#+end_src
+
+#+begin_src bash
   ./gradlew build -x test
 #+end_src
 
